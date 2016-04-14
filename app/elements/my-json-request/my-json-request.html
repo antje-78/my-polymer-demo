@@ -7,7 +7,6 @@
                deboundDuration="30000"
                handleAs="json"
                verbose="true"
-               lastRequest="[[result]]"
                on-response="_response" on-request="_request"></iron-ajax>
     <!--<my-list items="[[result]]"></my-list>-->
   </template>
@@ -23,9 +22,7 @@
             type: Object
           },
           result: {
-            type: Array,
-            notify: true,
-            readOnly: true
+            notify: true
           }
         },
 

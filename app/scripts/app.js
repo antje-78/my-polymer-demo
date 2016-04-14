@@ -26,17 +26,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   if (window.location.port === '63342') {  // if production
     // Uncomment app.baseURL below and
     // set app.baseURL to '/your-pathname/' if running from folder in production
-    app.baseUrl = '/polymer-starter-kit/app/';
+    app.baseUrl = '/my-polymer-demo/app/';
   }
 
   // Sets default service URL
-  app.serviceUrl = "http://test-glassfish4/korona.resource/service";
+  app.serviceUrl = "http://test-glassfish4.cag.combase.de/korona.resource/service";
   if (window.location.port === '') {  // if production
     app.serviceUrl = "../../service";
   }
 
   app.queryMeetingPointsUrl = app.serviceUrl + '/events/meeting-points';
-  
+
   app.displayInstalledToast = function() {
     // Check to make sure caching is actually enabled—it won't be in the dev environment.
     if (!Polymer.dom(document).querySelector('platinum-sw-cache').disabled) {

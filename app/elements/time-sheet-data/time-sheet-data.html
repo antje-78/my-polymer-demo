@@ -1,0 +1,109 @@
+<link rel="import" href="../../bower_components/iron-localstorage/iron-localstorage.html">
+
+<dom-module id="time-sheet-data">
+  <template>
+    <iron-localstorage name="time-sheet-data"
+                       on-iron-localstorage-load="_backupLoaded"
+                       value="{{backupItems}}"
+    >
+    </iron-localstorage>
+  </template>
+  <script>
+    HTMLImports.whenReady(function () {
+      Polymer({
+        is: 'time-sheet-data',
+
+        listeners: {
+          'refresh': '_refreshGrid'
+        },
+
+        properties: {
+          itemsCache: {
+            type: Array,
+            value: [
+              {
+                eventTime: '10:00 - 11:20',
+                eventName: 'apfelkuchen',
+                eventShortname: 'Kurztext aus zweiter zeile Event',
+                eventLanguage: 'Deutsch',
+                eventDescription: 'Lorem ipsum dolor sit amet, ... ',
+                eventMeetingPoint: 'gartenzaun',
+
+                eventAttributes: [],
+
+                bookings: [
+                  {
+                    number: 'B #12346546498',
+                    contact: 'Frau Mustermann',
+                    phone: '0123 456987',
+                    firm: 'muster GmbH',
+                    persons: 20,
+                    payment: 'bar',
+                    internComment: 'blubber blubb'
+                  },
+                  {
+                    number: 'B #89562317',
+                    contact: 'Herr Rauschebart',
+                    phone: '',
+                    firm: '',
+                    persons: 17,
+                    payment: 'EC',
+                    internComment: 'blubber blubb'
+                  }
+                ],
+
+                capacityBooked: 40,
+                capacityTotal: 50,
+                capacityAvailable: 3,
+
+                ressources: [
+                  {
+                    resTypeId: 1,
+                    resId: 12011,
+                    name: 'Holz, Klaus',
+                    phone: '3210 456987'
+                  },
+                  {
+                    resTypeId: 12231,
+                    resId: 28072,
+                    name: 'Museum11111',
+                    phone: ''
+                  },
+                ],
+                color: '#fff',
+                commentKasse: ''
+              }
+              ]
+          },
+
+          items: {
+            notify: true
+          }
+        },
+
+        attached: function() {
+
+        },
+
+        _refreshGrid: function () {
+          console.log('refresh on ' + this.localName + ' catched!');
+          var backupItems = this.get('backupItems');
+          console.log('values: ' + backupItems);
+          var itemsCount =  (typeof backupItems === undefined || backupItems == null ?  0 : backupItems.length);
+          var index = itemsCount >= this.itemsCache.length ? itemsCount - (this.itemsCache.length * parseInt(backupItems.length / this.itemsCache.length)) : itemsCount;
+          if (typeof backupItems === undefined || backupItems == null )
+            this.set('backupItems', []);
+          this.set('backupItems.' + itemsCount, this.itemsCache[index]);
+          this.items = this.backupItems;
+          console.log('Items: ' + this.items);
+          this.querySelector('iron-localstorage').save();
+          this.querySelector('iron-localstorage').reload();
+        },
+
+        _backupLoaded: function () {
+          this.items = this.backupItems; // .slice()
+        }
+      });
+    });
+  </script>
+</dom-module>

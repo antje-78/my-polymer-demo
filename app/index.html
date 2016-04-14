@@ -127,10 +127,37 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                     document.querySelector('#eventdate-dialog').open();
                   }
                 </script>
+                <p>Meine Demo</p>
+
+                <my-grid-view id="demo-grid" items="{{timesheetData}}" columns='[{name: "eventTime"},{name: "eventTime"}]'>
+                  <timesheet-data items="{{timesheetData}}" class="dataProvider"></timesheet-data>
+                  <div class="filterContainer">
+                    <p>Filter</p>
+
+                    <paper-input-container width="10px" always-float-label>
+                      <label>Eventdatum</label>
+                      <input is="iron-input" type="text" value="{{filter.date}}" placeholder="Datum eingeben">
+                      <paper-icon-button suffix icon="today" alt="" title="" >
+                      </paper-icon-button>
+                    </paper-input-container>
+                    <my-dropdown-menu label="Treffpunkt" placeholder="Treffpunkt auswählen" url="{{queryMeetingPointsUrl}}"></my-dropdown-menu>
+                    <my-dropdown-menu label="Thema" placeholder="Thema auswählen" url$="{{serviceUrl}}/events/topics"></my-dropdown-menu>
+                    <my-dropdown-menu label="Eventtyp" placeholder="Eventtyp auswählen" url$="{{serviceUrl}}/events/types"></my-dropdown-menu>
+                  </div>
+                </my-grid-view>
+              </paper-material>
+
+              <paper-material elevation="1">
+                <script>
+                  function chooseDate() {
+                    document.querySelector('#eventdate-dialog').open();
+                  }
+                </script>
                   <p>Meine Demo</p>
 
                   <my-grid-view id="demo-grid" items="{{items}}">
-                    <div id="filterContainer">
+                    <my-grid-data items="{{items}}" class="dataProvider"></my-grid-data>
+                    <div class="filterContainer">
                       <p>Filter</p>
 
                       <paper-input-container width="10px" always-float-label>
@@ -140,61 +167,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                         </paper-icon-button>
                       </paper-input-container>
                       <my-dropdown-menu label="Treffpunkt" placeholder="Treffpunkt auswählen" url="{{queryMeetingPointsUrl}}"></my-dropdown-menu>
-                      <paper-dropdown-menu label="Your favourite pastry">
-                        <paper-menu class="dropdown-content">
-                          <paper-item>Croissant</paper-item>
-                          <paper-item>Donut</paper-item>
-                          <paper-item>Financier</paper-item>
-                          <paper-item>Madeleine</paper-item>
-                        </paper-menu>
-                      </paper-dropdown-menu>
-
-                      <!--<my-json-request id="meetingPointsRequest" url=""></my-json-request>-->
-                      <!--<paper-dropdown-menu label="" placeholder="" always-float-label>-->
-                        <!--<paper-listbox items="{{meetingPointsRequest.result}}"></paper-listbox>-->
-                      <!--</paper-dropdown-menu>-->
-                      <!--<my-list items="{{meetingPointsRequest.result}}"></my-list>-->
-                      <!--<date-picker id="eventdate-dialog" modal="true"></date-picker>-->
+                      <my-dropdown-menu label="Thema" placeholder="Thema auswählen" url$="{{serviceUrl}}/events/topics"></my-dropdown-menu>
+                      <my-dropdown-menu label="Eventtyp" placeholder="Eventtyp auswählen" url$="{{serviceUrl}}/events/types"></my-dropdown-menu>
                     </div>
                   </my-grid-view>
-                  <!--<my-icon icon="refresh" event-target="demo-grid" event-name="refresh"></my-icon>-->
-
-                <!--<my-grid id="demo-grid"></my-grid>-->
-                <!--<iron-ajax auto-->
-                           <!--url="https://demo.vaadin.com/demo-data/1.0/people"-->
-                           <!--params='{"index": 0, "count": 10}'-->
-                           <!--handle-as="json"-->
-                           <!--last-response="{{ajaxResponse}}"></iron-ajax>-->
-                <!--<div>-->
-                  <!--<vaadin-grid id="lazy">-->
-                    <!--<table>-->
-                      <!--<colgroup>-->
-                        <!--<col name="number" width="60" flex="1">-->
-                        <!--<col name="firstName" flex="2">-->
-                        <!--<col name="lastName" flex="2">-->
-                        <!--<col name="email" flex="2">-->
-                      <!--</colgroup>-->
-                      <!--<thead>-->
-                      <!--<tr>-->
-                        <!--<th>#</th>-->
-                        <!--<th>Vorname</th>-->
-                        <!--<th>Nachname</th>-->
-                        <!--<th>E-Mail</th>-->
-                      <!--</tr>-->
-                      <!--</thead>-->
-                      <!--<tbody>-->
-                        <!--<template is="dom-repeat" items="{{ajaxResponse.result}}">-->
-                          <!--<tr>-->
-                            <!--<td></td>-->
-                            <!--<td>{{item.firstName}}</td>-->
-                            <!--<td>{{item.lastName}}</td>-->
-                            <!--<td>{{item.email}}</td>-->
-                          <!--</tr>-->
-                        <!--</template>-->
-                      <!--</tbody>-->
-                    <!--</table>-->
-                  <!--</vaadin-grid>-->
-                <!--</div>-->
               </paper-material>
 
               <paper-material elevation="1">

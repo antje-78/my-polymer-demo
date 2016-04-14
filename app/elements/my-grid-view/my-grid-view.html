@@ -4,11 +4,12 @@
 
 <dom-module id="my-grid-view">
   <template>
-    <my-grid-data items="{{items}}"></my-grid-data>
+    <ontent selector=".dataProvider"></ontent>
+
     <iron-icon icon="refresh" on-tap="_refreshGrid"></iron-icon>
     <!--<div><iron-icon icon="delete"></iron-icon></div>-->
     <div class="">
-      <content selector="#filterContainer"></content>
+      <content selector=".filterContainer"></content>
     </div>
     <my-grid items="{{items}}" columns="{{columns}}" on-edit="editItem" on-delete="deleteItem"></my-grid>
   </template>

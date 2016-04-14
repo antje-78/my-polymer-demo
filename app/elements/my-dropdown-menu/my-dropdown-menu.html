@@ -1,5 +1,5 @@
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
-<link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
 
 <dom-module id="my-dropdown-menu">
   <template>
@@ -7,16 +7,8 @@
     <paper-dropdown-menu label="{{label}}" placeholder="{{placeholder}}" always-float-label>
       <paper-menu class="dropdown-content">
         <template is="dom-repeat" items="{{result}}">
-          <paper-item>1 {{item.name}}</paper-item>
+          <paper-item>{{item.name}}</paper-item>
         </template>
-      </paper-menu>
-    </paper-dropdown-menu>
-    <paper-dropdown-menu label="Your favourite pastry">
-      <paper-menu class="dropdown-content">
-        <paper-item>Croissant</paper-item>
-        <paper-item>Donut</paper-item>
-        <paper-item>Financier</paper-item>
-        <paper-item>Madeleine</paper-item>
       </paper-menu>
     </paper-dropdown-menu>
   </template>
