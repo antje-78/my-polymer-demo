@@ -1,0 +1,76 @@
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+
+<dom-module id="my-dropdown-menu">
+  <template>
+    <my-json-request url="[[url]]" result="{{result}}" on-response="_response"></my-json-request>
+    <paper-dropdown-menu label="{{label}}" placeholder="{{placeholder}}" always-float-label>
+      <paper-menu class="dropdown-content">
+        <template is="dom-repeat" items="{{result}}">
+          <paper-item>1 {{item.name}}</paper-item>
+        </template>
+      </paper-menu>
+    </paper-dropdown-menu>
+    <paper-dropdown-menu label="Your favourite pastry">
+      <paper-menu class="dropdown-content">
+        <paper-item>Croissant</paper-item>
+        <paper-item>Donut</paper-item>
+        <paper-item>Financier</paper-item>
+        <paper-item>Madeleine</paper-item>
+      </paper-menu>
+    </paper-dropdown-menu>
+  </template>
+  <script>
+    HTMLImports.whenReady(function () {
+      Polymer({
+        is: 'my-dropdown-menu',
+
+        properties: {
+          label: {
+            type: String,
+            value: 'Label'
+          },
+
+          placeholder: {
+            type: String,
+            value: 'Bitte auswählen'
+          },
+
+          url: String,
+
+          result: Array
+        },
+
+        listeners: {
+          'response': '_response'
+        },
+
+        created: function () {
+          console.log(this.localName + ' was created!');
+//          if (typeof this.url != undefined)
+//            console.log('url: ' + this.url);
+        },
+
+        ready: function () {
+          console.log(this.localName + ' was ready!');
+//          if ( typeof this.url != undefined)
+//            console.log('url: ' + this.url);
+        },
+
+        attached: function () {
+          console.log(this.localName + ' was attached!');
+          console.log(this.result);
+//          if ( typeof this.url != undefined)
+//            console.log('url: ' + this.url);
+        },
+
+        _response: function (e) {
+          console.log(this.localName + ' response fired!' + e.detail.response);
+          this.result = e.detail.response;
+        }
+
+
+      });
+    });
+  </script>
+</dom-module>

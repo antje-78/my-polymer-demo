@@ -1,0 +1,33 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+
+<dom-module id="my-grid-item">
+  <template>
+    <td></td>
+    <td>{{item.firstName}}</td>
+    <td>{{item.lastName}}</td>
+    <td>{{item.email}}</td>
+    <td>{{item.street}}</td>
+    <td>{{item.zipcode}}</td>
+    <td>{{item.city}}</td>
+    <td>{{item.state}}</td>
+    <td>{{item.country}}</td>
+    <td>{{item.phone}}</td>
+    <td>
+      <my-icon icon="delete"></my-icon>
+    </td>
+  </template>
+  <script>
+    Polymer({
+      is: 'my-grid-item',
+
+      properties: {
+        item: Object
+      },
+
+      _onDelete: function () {
+        this.fire('delete-item', {'item': this.item} );
+      }
+    })
+  </script>
+</dom-module>

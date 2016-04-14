@@ -1,0 +1,59 @@
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+
+<dom-module id="my-json-request">
+  <template>
+    <iron-ajax id="jsonrequest" url="{{url}}"
+               contentType="text/json"
+               deboundDuration="30000"
+               handleAs="json"
+               verbose="true"
+               lastRequest="[[result]]"
+               on-response="_response" on-request="_request"></iron-ajax>
+    <!--<my-list items="[[result]]"></my-list>-->
+  </template>
+  <script>
+    HTMLImports.whenReady(function(){
+      Polymer({
+        is: 'my-json-request',
+
+        properties: {
+          url: String,
+
+          parameters: {
+            type: Object
+          },
+          result: {
+            type: Array,
+            notify: true,
+            readOnly: true
+          }
+        },
+
+        listeners: {
+          'request': '_request',
+          'response': '_response'
+        },
+
+        attached: function () {
+          this.$.jsonrequest.generateRequest();
+//          this.addEventListener('WebComponentsReady', function () {
+//            var jsonRequest = this.querySelector('my-json-request')
+//          });
+        },
+
+        urlChanged: function () {
+          console.log(this.localName + ' url changed!')
+        },
+
+        _request: function () {
+          console.log(this.localName + ' request fired!')
+        },
+
+        _response: function(e) {
+          console.log(this.localName + ' response fired!' + e.detail.response);
+          this.result = e.detail.response;
+        }
+      });
+    });
+  </script>
+</dom-module>

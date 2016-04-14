@@ -1,0 +1,45 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+
+<dom-module id="my-icon">
+  <template>
+    <iron-icon icon="[[icon]]"></iron-icon>
+  </template>
+  <script>
+    Polymer({
+      is: 'my-icon',
+
+      properties: {
+        icon: {
+          type: String,
+          value: 'refresh'
+        },
+        eventTarget: {
+          type: String,
+          value: ''
+        },
+        eventName: {
+          type: String,
+          value: ''
+        },
+        eventOptions: {
+          type: String,
+          value: {}
+        }
+      },
+
+      listeners: {
+        'tap' : 'handleTap'
+      },
+
+      handleTap: function() {
+        if (this.eventName === undefined)
+          return;
+        target = document.getElementById(this.eventTarget);
+        if (target === undefined)
+          console.error('Target-Element not found: ' + this.eventTarget);
+        this.fire(this.eventName, this.eventOptions);
+      }
+    })
+  </script>
+</dom-module>

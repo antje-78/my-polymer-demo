@@ -1,0 +1,96 @@
+<!doctype html>
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="generator" content="Polymer Starter Kit">
+  <title>Polymer Starter Kit</title>
+
+  <!-- Place favicon.ico in the `app/` directory -->
+
+  <!-- Chrome for Android theme color -->
+  <meta name="theme-color" content="#2E3AA1">
+
+  <!-- Web Application Manifest -->
+  <link rel="manifest" href="manifest.json">
+
+  <!-- Tile color for Win8 -->
+  <meta name="msapplication-TileColor" content="#3372DF">
+
+  <!-- Add to homescreen for Chrome on Android -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="application-name" content="PSK">
+  <link rel="icon" sizes="192x192" href="images/touch/chrome-touch-icon-192x192.png">
+
+  <!-- Add to homescreen for Safari on iOS -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="Polymer Starter Kit">
+  <link rel="apple-touch-icon" href="images/touch/apple-touch-icon.png">
+
+  <!-- Tile icon for Win8 (144x144) -->
+  <meta name="msapplication-TileImage" content="images/touch/ms-touch-icon-144x144-precomposed.png">
+
+  <!-- build:css styles/main.css -->
+  <link rel="stylesheet" href="styles/main.css">
+  <!-- endbuild-->
+
+  <!-- build:js bower_components/webcomponentsjs/webcomponents-lite.min.js -->
+  <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+  <!-- endbuild -->
+
+  <!-- Because this project uses vulcanize this should be your only html import
+       in this file. All other imports should go in elements.html -->
+  <link rel="import" href="elements/elements.html">
+
+  <!-- For shared styles, shared-styles.html import in elements.html -->
+  <!--<style is="custom-style" include="shared-styles"></style>-->
+</head>
+<body unresolved>
+<div>
+  <vaadin-grid id="lazy" items='[{"firstName":"Gabriel","lastName":"Cook","address":{"street":"6261 Hidden Lake Manor","city":"Foot of Ten","state":"Alabama","zip":"36262-6582","country":"USA","phone":"(251) 555-1099"},"email":"gabriel.cook@company.com"},{"firstName":"Genesis","lastName":"Stewart","address":{"street":"8616 Heather Glade","city":"Corkscrew","state":"Mississippi","zip":"38785-5317","country":"USA","phone":"(601) 555-9985"},"email":"genesis.stewart@company.com"},{"firstName":"Ayden","lastName":"Rivera","address":{"street":"9236 Quiet Round","city":"Vopolo Havoka","state":"Missouri","zip":"64519-3548","country":"USA","phone":"(417) 555-8373"},"email":"ayden.rivera@company.com"},{"firstName":"Hunter","lastName":"Sullivan","address":{"street":"4662 Stony View","city":"Oblong","state":"Illinois","zip":"62468-0592","country":"USA","phone":"(618) 555-6510"},"email":"hunter.sullivan@company.com"},{"firstName":"Jordan","lastName":"Cooper","address":{"street":"961 Golden Crescent","city":"Quinapoxet","state":"Tennessee","zip":"37314-3596","country":"USA","phone":"(865) 555-9904"},"email":"jordan.cooper@company.com"},{"firstName":"Ariana","lastName":"Parker","address":{"street":"2590 Little Sky Square","city":"Defeated","state":"New Jersey","zip":"07091-9079","country":"USA","phone":"(551) 555-6739"},"email":"ariana.parker@company.com"},{"firstName":"Lillian","lastName":"Flores","address":{"street":"8695 High Horse Carrefour","city":"Nashville","state":"District of Columbia","zip":"20012-7697","country":"USA","phone":"(202) 555-5209"},"email":"lillian.flores@company.com"},{"firstName":"Levi","lastName":"Bell","address":{"street":"5868 Cinder Centre","city":"Apponagansett","state":"North Dakota","zip":"58777-1298","country":"USA","phone":"(701) 555-0519"},"email":"levi.bell@company.com"},{"firstName":"Leah","lastName":"Morris","address":{"street":"3977 Heather Way","city":"Nankipooh","state":"Minnesota","zip":"56063-2417","country":"USA","phone":"(320) 555-1707"},"email":"leah.morris@company.com"},{"firstName":"Ian","lastName":"Perry","address":{"street":"2139 Dewy Autumn Orchard","city":"Wax","state":"Florida","zip":"34109-9657","country":"USA","phone":"(863) 555-4371"},"email":"ian.perry@company.com"}]'>
+    <table>
+      <colgroup>
+        <col name="number" width="60" flex="1">
+        <col name="firstName" flex="2">
+        <col name="lastName" flex="2">
+        <col name="email" flex="2">
+      </colgroup>
+      <thead>
+      <tr>
+        <th>#</th>
+        <th>Vorname</th>
+        <th>Nachname</th>
+        <th>E-Mail</th>
+      </tr>
+      </thead>
+      <tbody>
+      <template is="dom-repeat" items="{{items}}">
+        <tr>
+          <td></td>
+          <td>{{item.firstName}}</td>
+          <td>{{item.lastName}}</td>
+          <td>{{item.email}}</td>
+        </tr>
+      </template>
+      </tbody>
+    </table>
+  </vaadin-grid>
+</div>
+<!-- build:js scripts/app.js -->
+<script src="scripts/app.js"></script>
+<!-- endbuild-->
+</body>
+</html>

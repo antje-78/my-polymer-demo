@@ -1,0 +1,215 @@
+<dom-module id="my-page" >
+  <template>
+    <style>
+      /* local styles go here */
+    </style>
+    <!-- local DOM goes here -->
+    <paper-drawer-panel id="paperDrawerPanel">
+      <!-- Drawer Scroll Header Panel -->
+      <paper-scroll-header-panel drawer fixed>
+
+        <!-- Drawer Toolbar -->
+        <paper-toolbar id="drawerToolbar">
+          <span class="menu-name">Menu</span>
+        </paper-toolbar>
+
+        <!-- Drawer Content -->
+        <paper-menu class="app-menu" attr-for-selected="data-route" selected="[[route]]">
+          <a data-route="home" href="{{baseUrl}}">
+            <iron-icon icon="home"></iron-icon>
+            <span>Home</span>
+          </a>
+
+          <a data-route="users" href="{{baseUrl}}users">
+            <iron-icon icon="info"></iron-icon>
+            <span>Users</span>
+          </a>
+
+          <a data-route="contact" href="{{baseUrl}}contact">
+            <iron-icon icon="mail"></iron-icon>
+            <span>Contact</span>
+          </a>
+        </paper-menu>
+      </paper-scroll-header-panel>
+
+      <!-- Main Area -->
+      <paper-scroll-header-panel main id="headerPanelMain" condenses keep-condensed-header>
+        <!-- Main Toolbar -->
+        <content select="#mainToolbar"></content>
+
+        <!-- Main Content -->
+        <div class="content">
+          <content select="iron-pages"></content>
+        </div>
+      </paper-scroll-header-panel>
+    </paper-drawer-panel>
+
+    <paper-toast id="toast">
+      <span class="toast-hide-button" role="button" tabindex="0" onclick="app.$.toast.hide()">Ok</span>
+    </paper-toast>
+  </template>
+  <script>
+    Polymer({
+      is: 'my-page',
+
+      properties: {
+        title: String,
+        baseUrl: {
+          type: String,
+          value: '/',
+          notify: true
+        }
+      },
+
+      /**
+       * The Polymer method returns a basic constructor that can be used to instantiate the custom element. If you want to pass arguments to the constructor to configure the new element, you can specify a custom factoryImpl function on the prototype.
+       *
+       * The constructor returned from Polymer creates an instance using document.createElement, then invokes the user-supplied factoryImpl function with this bound to the element instance. Any arguments passed to the actual constructor are passed on to the factoryImpl function.
+       *
+       * Initialization order: 3
+       * */
+      factoryImpl: function(foo, bar) {
+
+      },
+
+      /*
+       * Called when the element has been created, but before property values are set and local DOM is initialized.
+       *
+       * Use for one-time set-up before property values are set.
+       *
+       * Use instead of createdCallback.
+       * Initialization order: 1
+       * */
+      created: function (e) {
+        console.log(this.localName + '#' + this.id + ' was created');
+        // Grab a reference to our auto-binding template
+        // and give it some initial binding values
+        // Learn more about auto-binding templates at http://goo.gl/Dx1u2g
+        var app = document.querySelector('#app');
+        console.log('app.$.baseUrl = ' + this.baseUrl);
+        // Sets app default base URL
+        this.baseUrl = '/';
+        if (window.location.port === '') {  // if production
+          // Uncomment this.baseUrl below and
+          // set this.baseUrl to '/your-pathname/' if running from folder in production
+          // this.baseUrl = '/polymer-starter-kit/';
+        }
+
+        if (window.location.port === '63342') {  // if production
+          // Uncomment this.baseUrl below and
+          // set this.baseUrl to '/your-pathname/' if running from folder in production
+          this.baseUrl = '/polymer-starter-kit/app/';
+        }
+
+        app.displayInstalledToast = function() {
+          // Check to make sure caching is actually enabled—it won't be in the dev environment.
+          if (!Polymer.dom(document).querySelector('platinum-sw-cache').disabled) {
+            Polymer.dom(document).querySelector('#caching-complete').show();
+          }
+        };
+
+        // Listen for template bound event to know when bindings
+        // have resolved and content has been stamped to the page
+        app.addEventListener('dom-change', function() {
+          console.log('Our app is ready to rock!');
+        });
+
+        // See https://github.com/Polymer/polymer/issues/1381
+        window.addEventListener('WebComponentsReady', function() {
+          // imports are loaded and elements have been registered
+        });
+
+        // Main area's paper-scroll-header-panel custom condensing transformation of
+        // the appName in the middle-container and the bottom title in the bottom-container.
+        // The appName is moved to top and shrunk on condensing. The bottom sub title
+        // is shrunk to nothing on condensing.
+        window.addEventListener('paper-header-transform', function(e) {
+          var appName = Polymer.dom(document).querySelector('#mainToolbar .app-name');
+          var middleContainer = Polymer.dom(document).querySelector('#mainToolbar .middle-container');
+          var bottomContainer = Polymer.dom(document).querySelector('#mainToolbar .bottom-container');
+          var detail = e.detail;
+          var heightDiff = detail.height - detail.condensedHeight;
+          var yRatio = Math.min(1, detail.y / heightDiff);
+          // appName max size when condensed. The smaller the number the smaller the condensed size.
+          var maxMiddleScale = 0.50;
+          var auxHeight = heightDiff - detail.y;
+          var auxScale = heightDiff / (1 - maxMiddleScale);
+          var scaleMiddle = Math.max(maxMiddleScale, auxHeight / auxScale + maxMiddleScale);
+          var scaleBottom = 1 - yRatio;
+
+          // Move/translate middleContainer
+          Polymer.Base.transform('translate3d(0,' + yRatio * 100 + '%,0)', middleContainer);
+
+          // Scale bottomContainer and bottom sub title to nothing and back
+          Polymer.Base.transform('scale(' + scaleBottom + ') translateZ(0)', bottomContainer);
+
+          // Scale middleContainer appName
+          Polymer.Base.transform('scale(' + scaleMiddle + ') translateZ(0)', appName);
+        });
+
+        // Scroll page to top and expand header
+        app.scrollPageToTop = function() {
+          if (app.$.headerPanelMain == undefined)
+            document.getElementById('headerPanelMain').scrollToTop(true);
+          else
+            app.$.headerPanelMain.scrollToTop(true);
+        };
+
+        app.closeDrawer = function() {
+          if (app.$.paperDrawerPanel == undefined)
+            document.getElementById('paperDrawerPanel').closeDrawer();
+          else
+            app.$.paperDrawerPanel.closeDrawer();
+        };
+      },
+
+      /**
+       * Called after property values are set and local DOM is initialized.
+       *
+       * Use for one-time configuration of your component after local DOM is initialized. (For configuration based on property values, it may be preferable to use an observer.)
+       * Initialization order: 2
+       * */
+      ready: function (e) {
+        console.log(this.localName + '#' + this.id + ' has local DOM initialized');
+        // access a local DOM element by ID using this.$
+        //this.$.header.textContent = 'Hello!';
+      },
+
+      /**
+       * Called after the element is attached to the document. Can be called multiple times during the lifetime of an element. The first `attached` callback is guaranteed not to fire until after `ready`.
+       *
+       * Uses include accessing computed style information, and adding document-level event listeners. (If you use declarative event handling, such as annotated event listeners or the listeners object, Polymer automatically adds listeners on attach and removes them on detach.)
+       *
+       * Use instead of attachedCallback.
+       * Initialization order: 4
+       **/
+      attached: function (e) {
+        console.log(this.localName + '#' + this.id + ' was attached');
+      },
+
+      /**
+       * Called after the element is detached from the document. Can be called multiple times during the lifetime of an element.
+       *
+       * Uses include removing event listeners added in attached.
+       *
+       * Use instead of detachedCallback.
+       * */
+      detached: function (e) {
+        console.log(this.localName + '#' + this.id + ' was detached');
+      },
+
+      /**
+       * Called when one of the element's attributes is changed.
+       *
+       * Use to handle attribute changes that don't correspond to declared properties. (For declared properties, Polymer handles attribute changes automatically as described in attribute deserialization.)
+       *
+       * Use instead of attributeChangedCallback.
+       * */
+      attributeChanged: function (name, type) {
+        console.log(this.localName + '#' + this.id + ' attribute ' + name +
+          ' was changed to ' + this.getAttribute(name));
+      }
+
+    });
+  </script>
+</dom-module>

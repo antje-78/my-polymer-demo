@@ -1,0 +1,143 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+
+<dom-module id="my-grid">
+  <template>
+    <style>
+      #loadingIndicatorRow .hide {
+        display: none;
+      }
+      #loadingIndicatorRow .show {
+        display: block;
+      }
+      vaadin-grid table:before {
+        -webkit-animation: vaadin-grid-spin-360 400ms linear infinite;
+        animation: vaadin-grid-spin-360 400ms linear infinite;
+        border: 2px solid #03A9F4;
+        border-radius: 50%;
+        border-right-color: transparent;
+        border-top-color: transparent;
+        content: "";
+        display: block;
+        height: 16px;
+        left: 50%;
+        margin-left: -8px;
+        margin-top: -8px;
+        position: absolute;
+        top: 60%;
+        width: 16px;
+        z-index: 9;
+      }
+      /* Anim */
+      @keyframes grid-spin-360 {
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      @-webkit-keyframes grid-spin-360 {
+        100% {
+          -webkit-transform: rotate(360deg);
+          transform: rotate(360deg);
+        }
+      }
+
+      div.grid-container.grid-loading-data vaadin-grid:after {
+        -webkit-animation: grid-spin-360 400ms linear infinite;
+        animation: grid-spin-360 400ms linear infinite;
+        border: 2px solid #03A9F4;
+        border-radius: 50%;
+        border-right-color: transparent;
+        border-top-color: transparent;
+        content: "";
+        display: block;
+        height: 16px;
+        left: 50%;
+        margin-left: -8px;
+        margin-top: -8px;
+        position: absolute;
+        top: 70%;
+        width: 16px;
+        z-index: 9;
+      }
+    </style>
+    <div class="grid-container">
+      <vaadin-grid id="grid" items="{{items}}">
+        <table>
+
+        </table>
+      </vaadin-grid>
+    </div>
+  </template>
+  <script>
+    (function() {
+      Polymer({
+        is: 'my-grid',
+
+        properties: {
+          items: Array,
+          columns: Array
+        },
+
+        listeners: {
+          'refreshGrid': '_refreshGrid',
+          'dataLoaded': '_dataLoaded'
+        },
+
+        created: function (e) {
+          console.log(this.localName + ' was created!')
+        },
+
+        ready: function (e) {
+          console.log(this.localName + ' was ready!');
+        },
+
+        attached: function () {
+          console.log(this.localName + ' was attached!');
+          var vaadin_grid = this.querySelector('vaadin-grid');
+          for(var i = 0; i < this.columns.length; i++) {
+            vaadin_grid.columns[i] = { name: this.columns[i].name, title: this.columns[i].title };
+            vaadin_grid.columns[i].textContent = this.columns[i].title;
+          }
+        },
+
+        detached: function () {
+          window.addEventListener('WebComponentsReady', function () {
+            var grid = document.querySelector("vaadin-grid");
+            if (grid == undefined)
+              return;
+            grid.fire('refresh');
+          });
+        },
+
+        _refreshGrid: function(){
+          console.log(this.localName + ' refresh!');
+          var grid = document.querySelector("vaadin-grid");
+          if (grid == undefined)
+            return;
+          grid.items = [{}];
+          this.toggleClass('grid-loading-data', true, document.querySelector("grid-container"));
+          this.fire('loadData-' + this.getAttribute('id'), { 'grid' : grid });
+        },
+
+        _dataLoaded: function() {
+          grid.items = this.items == undefined ? [] : this.items;
+          grid.toggleClass('grid-loading-data', false, document.querySelector("grid-container"));
+        },
+
+        updateItems: function () {
+          var grid = document.querySelector("vaadin-grid");
+          grid.items = [{}];
+
+//          var loadingIndicatorRow = document.getElementById('loadingIndicatorRow');
+//          loadingIndicatorRow.setAttribute("class", "show");
+//                      grid.items = function(params, callback) {
+//                        getJSON('https://demo.vaadin.com/demo-data/1.0/people?index=' + params.index + '&count=' + params.count, function(json) {
+//                          callback(json.result, json.size);
+//                        });
+//                      };
+        }
+      });
+    })();
+  </script>
+</dom-module>

@@ -1,0 +1,42 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-input/iron-input.html">
+
+<dom-module id="my-grid-view">
+  <template>
+    <my-grid-data items="{{items}}"></my-grid-data>
+    <iron-icon icon="refresh" on-tap="_refreshGrid"></iron-icon>
+    <!--<div><iron-icon icon="delete"></iron-icon></div>-->
+    <div class="">
+      <content selector="#filterContainer"></content>
+    </div>
+    <my-grid items="{{items}}" columns="{{columns}}" on-edit="editItem" on-delete="deleteItem"></my-grid>
+  </template>
+  <script>
+    Polymer({
+      is: 'my-grid-view',
+
+      properties: {
+        items: Array,
+        columns: {
+          type: Array,
+          value: [{name: 'firstName', title: 'Vorname'}, {name: 'lastName', title: 'Nachname'}, {name: 'street', title: 'Straße'}, {name: 'city', title: 'Stadt'}, {name: 'state', title: 'Bundesland'}, {name: 'zipcode', title: 'PLZ'}, {name: 'country', title: 'Land'}, {name: 'phone', title: 'Telefonnummer'}, {name: 'email', title: 'E-Mail'}],
+          notify: true
+        }
+      },
+
+      _refreshGrid: function () {
+        this.fire('refresh', {}, { node: this.querySelector("my-grid-data"), bubbles: true, cancelable: false });
+      },
+
+      editItem: function () {
+
+      },
+
+      deleteItem: function () {
+
+      }
+
+    })
+  </script>
+</dom-module>

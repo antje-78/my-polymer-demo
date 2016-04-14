@@ -1,0 +1,30 @@
+<dom-module id="date-picker">
+  <template>
+    <paper-dialog id="datedialog" ><!-- entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop  -->
+        <h2>Dialog Title</h2>
+        <div><iron-icon icon="chevron-left"></iron-icon><div id="month"></div><iron-icon icon="chevron-right"></iron-icon></div>
+    </paper-dialog>
+  </template>
+  <script>
+    HTMLImports.whenReady(function () {
+      Polymer({
+        is: 'date-picker',
+
+        properties: {
+          date: {
+            type: String,
+            notify: true
+          }
+        },
+
+        open: function () {
+          this.$.datedialog.click();
+        },
+
+        close: function () {
+          this.$.datedialog.close();
+        }
+      })
+    });
+  </script>
+</dom-module>
