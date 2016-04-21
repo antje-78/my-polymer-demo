@@ -31,7 +31,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   }
 
   // Sets default service URL
-  app.serviceUrl = "http://test-glassfish4.cag.combase.de/korona.resource/service";
+  app.serviceUrl = "http://localhost/service";
   if (window.location.port === '') {  // if production
     app.serviceUrl = "../../service";
   }
