@@ -4,8 +4,8 @@
 <dom-module id="my-dropdown-menu">
   <template>
     <my-json-request url="[[url]]" result="{{result}}" on-response="_response"></my-json-request>
-    <paper-dropdown-menu label="{{label}}" placeholder="{{placeholder}}" always-float-label>
-      <paper-menu class="dropdown-content">
+    <paper-dropdown-menu label="{{label}}" placeholder="{{placeholder}}" always-float-label toggles="true">
+      <paper-menu class="dropdown-content" multi>
         <template is="dom-repeat" items="{{result}}">
           <paper-item>{{item.name}}</paper-item>
         </template>

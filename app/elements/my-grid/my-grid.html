@@ -64,19 +64,26 @@
     <div class="grid-container">
       <vaadin-grid id="grid" items="{{items}}">
         <table>
-
+          <colgroup>
+            <template is="dom-repeat" items="{{grid.columns}}" as="column">
+              <col name="{{column.name}}">
+            </template>
+          </colgroup>
         </table>
       </vaadin-grid>
     </div>
   </template>
   <script>
     (function() {
-      Polymer({
+      var MyGrid = Polymer({
         is: 'my-grid',
 
         properties: {
           items: Array,
-          columns: Array
+          columns: {
+            type: Array,
+            notify: true
+          }
         },
 
         listeners: {
@@ -95,10 +102,13 @@
         attached: function () {
           console.log(this.localName + ' was attached!');
           var vaadin_grid = this.querySelector('vaadin-grid');
+//          vaadin_grid.header.addRow();
           for(var i = 0; i < this.columns.length; i++) {
-            vaadin_grid.columns[i] = { name: this.columns[i].name, title: this.columns[i].title };
+            vaadin_grid.columns[i] = { "name": this.columns[i].name, "title": this.columns[i].title };
             vaadin_grid.columns[i].textContent = this.columns[i].title;
+            vaadin_grid.header.getCell(0, i).data = this.columns.title;
           }
+
         },
 
         detached: function () {

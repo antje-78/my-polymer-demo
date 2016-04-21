@@ -128,9 +128,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                   }
                 </script>
                 <p>Meine Demo</p>
+                <script>
+                  var MyTimeSheetNS= (function(){
+                    var MyTimeSheetNS = Object.prototype;
 
-                <my-grid-view id="demo-grid" items="{{timesheetData}}" columns='[{name: "eventTime"},{name: "eventTime"}]'>
+                    return {
+                      demo: 1
+                    }
+                  })();
+                </script>
+                <my-grid-view id="demo-grid" items="{{timesheetData}}" columns='[{"name": "firstName", "title": "Vorname"}, {"name": "lastName", "title": "Nachname"}, {"name": "street", "title": "Straße"}, {"name": "city", "title": "Stadt"}, {"name": "state", "title": "Bundesland"}, {"name": "zipcode", "title": "PLZ"}, {"name": "country", "title": "Land"}, {"name": "phone", "title": "Telefonnummer"}, {"name": "email", "title": "E-Mail"}]'>
                   <timesheet-data items="{{timesheetData}}" class="dataProvider"></timesheet-data>
+
                   <div class="filterContainer">
                     <p>Filter</p>
 
@@ -140,9 +149,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                       <paper-icon-button suffix icon="today" alt="" title="" >
                       </paper-icon-button>
                     </paper-input-container>
-                    <my-dropdown-menu label="Treffpunkt" placeholder="Treffpunkt auswählen" url="{{queryMeetingPointsUrl}}"></my-dropdown-menu>
+                    <my-dropdown-menu label="Treffpunkt" placeholder="Treffpunkt auswählen" url$="{{serviceUrl}}/events/meeting-points"></my-dropdown-menu>
                     <my-dropdown-menu label="Thema" placeholder="Thema auswählen" url$="{{serviceUrl}}/events/topics"></my-dropdown-menu>
                     <my-dropdown-menu label="Eventtyp" placeholder="Eventtyp auswählen" url$="{{serviceUrl}}/events/types"></my-dropdown-menu>
+                    <paper-dropdown-menu label="Ressourcen" placeholder="Ressourcen auswählen">
+                      <div class="horizontal-section dropdown-content">
+                        <paper-listbox >
+                          <paper-item>Ressource 1</paper-item>
+                        </paper-listbox>
+                      </div>
+                      <div class="horizontal-section dropdown-content">
+                        <paper-listbox>
+                          <paper-item>Ressource 2</paper-item>
+                        </paper-listbox>
+                      </div>
+                    </paper-dropdown-menu>
                   </div>
                 </my-grid-view>
               </paper-material>
@@ -155,7 +176,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 </script>
                   <p>Meine Demo</p>
 
-                  <my-grid-view id="demo-grid" items="{{items}}">
+                  <my-grid-view id="demo-grid" items="{{items}}" columns='[{"name": "firstName", "title": "Vorname"}, {"name": "lastName", "title": "Nachname"}, {"name": "street", "title": "Straße"}, {"name": "city", "title": "Stadt"}, {"name": "state", "title": "Bundesland"}, {"name": "zipcode", "title": "PLZ"}, {"name": "country", "title": "Land"}, {"name": "phone", "title": "Telefonnummer"}, {"name": "email", "title": "E-Mail"}]'>
                     <my-grid-data items="{{items}}" class="dataProvider"></my-grid-data>
                     <div class="filterContainer">
                       <p>Filter</p>
@@ -166,7 +187,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                         <paper-icon-button suffix icon="today" alt="" title="" >
                         </paper-icon-button>
                       </paper-input-container>
-                      <my-dropdown-menu label="Treffpunkt" placeholder="Treffpunkt auswählen" url="{{queryMeetingPointsUrl}}"></my-dropdown-menu>
+                      <my-dropdown-menu label="Treffpunkt" placeholder="Treffpunkt auswählen" url$="{{serviceUrl}}/events/meeting-points"></my-dropdown-menu>
                       <my-dropdown-menu label="Thema" placeholder="Thema auswählen" url$="{{serviceUrl}}/events/topics"></my-dropdown-menu>
                       <my-dropdown-menu label="Eventtyp" placeholder="Eventtyp auswählen" url$="{{serviceUrl}}/events/types"></my-dropdown-menu>
                     </div>
