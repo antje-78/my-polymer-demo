@@ -124,7 +124,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               <paper-material elevation="1">
                 <script>
                   function chooseDate() {
-                    document.querySelector('#eventdate-dialog').open();
+                    console.log(this.localName + ' chooseDate clicked!');
+                    document.querySelector('#dateFromDialog').open();
                   }
                 </script>
                 <p>Meine Demo</p>
@@ -142,28 +143,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
                   <div class="filterContainer">
                     <p>Filter</p>
-
-                    <paper-input-container width="10px" always-float-label>
-                      <label>Eventdatum</label>
-                      <input is="iron-input" type="text" value="{{filter.date}}" placeholder="Datum eingeben">
-                      <paper-icon-button suffix icon="today" alt="" title="" >
-                      </paper-icon-button>
-                    </paper-input-container>
-                    <my-dropdown-menu label="Treffpunkt" placeholder="Treffpunkt auswählen" url$="{{serviceUrl}}/events/meeting-points"></my-dropdown-menu>
-                    <my-dropdown-menu label="Thema" placeholder="Thema auswählen" url$="{{serviceUrl}}/events/topics"></my-dropdown-menu>
-                    <my-dropdown-menu label="Eventtyp" placeholder="Eventtyp auswählen" url$="{{serviceUrl}}/events/types"></my-dropdown-menu>
-                    <paper-dropdown-menu label="Ressourcen" placeholder="Ressourcen auswählen">
-                      <div class="horizontal-section dropdown-content">
-                        <paper-listbox >
-                          <paper-item>Ressource 1</paper-item>
-                        </paper-listbox>
-                      </div>
-                      <div class="horizontal-section dropdown-content">
-                        <paper-listbox>
-                          <paper-item>Ressource 2</paper-item>
-                        </paper-listbox>
-                      </div>
-                    </paper-dropdown-menu>
+                    <my-filter url="{{serviceUrl}}"></my-filter>
                   </div>
                 </my-grid-view>
               </paper-material>

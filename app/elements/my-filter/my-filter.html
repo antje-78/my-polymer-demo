@@ -1,0 +1,133 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-input/iron-input.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input-container.html">
+<link rel="import" href="../../bower_components/paper-date-picker/paper-date-picker.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../iron-flex-layout/iron-flex-layout-classes.html">
+
+
+<dom-module id="my-filter">
+  <template>
+    <style is="custom-style" include="iron-flex iron-flex-alignment"></style>
+
+    <div class="layout horizontal layout-start">
+      <paper-input-container always-float-label>
+        <label>Eventdatum von</label>
+        <input is="iron-input" type="text" value="{{dateFormat(dateFrom, 'dddd\, DD. MMMM YYYY')}}" placeholder="Datum eingeben">
+        <paper-icon-button suffix icon="today" alt="" title="" on-tap="showDateFromDialog"></paper-icon-button>
+      </paper-input-container>
+
+      <paper-dialog id="dateFromDialog" class="paper-date-picker-dialog" modal on-iron-overlay-closed="dismissDateFromDialog">
+        <paper-date-picker id="dateFromPicker" date="[[dateFrom]]" locale="de"></paper-date-picker>
+        <div class="buttons">
+          <paper-button dialog-dismiss>Cancel</paper-button>
+          <paper-button dialog-confirm>OK</paper-button>
+        </div>
+      </paper-dialog>
+      &nbsp;
+      <paper-input-container always-float-label>
+        <label>Eventdatum bis</label>
+        <input is="iron-input" type="text" value="{{dateFormat(dateTo, 'dddd\, DD. MMMM YYYY')}}" placeholder="Datum eingeben">
+        <paper-icon-button suffix icon="today" alt="" title="" on-tap="showDateToDialog"></paper-icon-button>
+      </paper-input-container>
+
+      <paper-dialog id="dateToDialog" class="paper-date-picker-dialog" modal on-iron-overlay-closed="dismissDateToDialog">
+        <paper-date-picker id="dateToPicker" date="[[dateTo]]" locale="de"></paper-date-picker>
+        <div class="buttons">
+          <paper-button dialog-dismiss>Cancel</paper-button>
+          <paper-button dialog-confirm>OK</paper-button>
+        </div>
+      </paper-dialog>
+    </div>
+
+    <my-dropdown-menu id="meeting-points-dropdown" label="Treffpunkt" placeholder="Treffpunkt auswählen" url$="{{url}}/events/meeting-points"></my-dropdown-menu>
+    <my-dropdown-menu id="topics-dropdown" label="Thema" placeholder="Thema auswählen" url$="{{url}}/events/topics"></my-dropdown-menu>
+    <my-dropdown-menu id="event-types-dropdown" label="Eventtyp" placeholder="Eventtyp auswählen" url$="{{url}}/events/types"></my-dropdown-menu>
+    <paper-dropdown-menu id="ressources-dropdown" label="Ressourcen" placeholder="Ressourcen auswählen">
+      <div class="layout horizontal layout-start dropdown-content">
+        <paper-menu class="dropdown-content" multi>
+          <paper-item>Ressource 1</paper-item>
+        </paper-menu>
+        <paper-menu class="dropdown-content" multi>
+          <paper-item>Ressource 2</paper-item>
+        </paper-menu>
+      </div>
+    </paper-dropdown-menu>
+  </template>
+  <script>
+    HTMLImports.whenReady(function () {
+      Polymer({
+        is: 'my-filter',
+
+        properties: {
+          dateFrom: {
+            type: Date,
+            value: new Date(),
+            notify: true
+          },
+
+          dateTo: {
+            type: Date,
+            value: new Date(),
+            notify: true
+          },
+
+          meetingPoints: {
+            type: Array,
+            notify: true
+          },
+
+          url: {
+            type: String,
+            notify: true
+          }
+        },
+
+      listeners: {
+          'iron-select': 'onSelect',
+          'iron-deselect': 'onDeselect'
+      },
+
+      showDateFromDialog: function () {
+          console.log(this.localName + ' showDateFromDialog clicked!');
+          this.$.dateFromDialog.toggle();
+      },
+
+      dismissDateFromDialog: function (e , data) {
+        console.log(this.localName + ' dismissDateFromDialog clicked!');
+        if (e.detail.confirmed) {
+          this.dateFrom = this.$.dateFromPicker.date;
+        }
+      },
+
+      showDateToDialog: function () {
+          console.log(this.localName + ' showDateToDialog clicked!');
+          this.$.dateToDialog.toggle();
+      },
+
+      dismissDateToDialog: function (e , data) {
+        console.log(this.localName + ' dismissDateToDialog clicked!');
+        if (e.detail.confirmed) {
+          this.dateTo = this.$.dateToPicker.date;
+        }
+      },
+
+      dateFormat: function(date, format) {
+          return moment(date).locale('de').format(format);
+        },
+
+      onSelect: function (e) {
+        console.log(this.localName + ' onSelect fired!', e, e.detail);
+      },
+
+      onDeselect: function (e) {
+        console.log(this.localName + ' onDeselect fired!', e, e.detail);
+      }
+
+    });
+  });
+
+  </script>
+</dom-module>
