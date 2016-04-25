@@ -42,9 +42,9 @@
       </paper-dialog>
     </div>
 
-    <my-dropdown-menu id="meeting-points-dropdown" label="Treffpunkt" placeholder="Treffpunkt auswählen" url$="{{url}}/events/meeting-points"></my-dropdown-menu>
-    <my-dropdown-menu id="topics-dropdown" label="Thema" placeholder="Thema auswählen" url$="{{url}}/events/topics"></my-dropdown-menu>
-    <my-dropdown-menu id="event-types-dropdown" label="Eventtyp" placeholder="Eventtyp auswählen" url$="{{url}}/events/types"></my-dropdown-menu>
+    <my-dropdown-menu id="meeting-points-dropdown" label="Treffpunkt" placeholder="Treffpunkt auswählen" url$="{{url}}/time-sheet/meetingPointList"></my-dropdown-menu>
+    <my-dropdown-menu id="topics-dropdown" label="Thema" placeholder="Thema auswählen" url$="{{url}}/time-sheet/topicList"></my-dropdown-menu>
+    <my-dropdown-menu id="event-types-dropdown" label="Eventtyp" placeholder="Eventtyp auswählen" url$="{{url}}/time-sheet/eventTypeList"></my-dropdown-menu>
     <paper-dropdown-menu id="ressources-dropdown" label="Ressourcen" placeholder="Ressourcen auswählen">
       <div class="layout horizontal layout-start dropdown-content">
         <paper-menu class="dropdown-content" multi>
@@ -75,6 +75,16 @@
           },
 
           meetingPoints: {
+            type: Array,
+            notify: true
+          },
+
+          topics: {
+            type: Array,
+            notify: true
+          },
+
+          eventTypes: {
             type: Array,
             notify: true
           },

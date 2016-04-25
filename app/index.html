@@ -122,12 +122,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <iron-pages attr-for-selected="data-route" selected="{{route}}">
             <section data-route="home" tabindex="-1">
               <paper-material elevation="1">
-                <script>
-                  function chooseDate() {
-                    console.log(this.localName + ' chooseDate clicked!');
-                    document.querySelector('#dateFromDialog').open();
-                  }
-                </script>
                 <p>Meine Demo</p>
                 <script>
                   var MyTimeSheetNS= (function(){
@@ -148,31 +142,31 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 </my-grid-view>
               </paper-material>
 
-              <paper-material elevation="1">
-                <script>
-                  function chooseDate() {
-                    document.querySelector('#eventdate-dialog').open();
-                  }
-                </script>
-                  <p>Meine Demo</p>
+              <!--<paper-material elevation="1">-->
+                <!--<script>-->
+                  <!--function chooseDate() {-->
+                    <!--document.querySelector('#eventdate-dialog').open();-->
+                  <!--}-->
+                <!--</script>-->
+                  <!--<p>Meine Demo</p>-->
 
-                  <my-grid-view id="demo-grid" items="{{items}}" columns='[{"name": "firstName", "title": "Vorname"}, {"name": "lastName", "title": "Nachname"}, {"name": "street", "title": "Straße"}, {"name": "city", "title": "Stadt"}, {"name": "state", "title": "Bundesland"}, {"name": "zipcode", "title": "PLZ"}, {"name": "country", "title": "Land"}, {"name": "phone", "title": "Telefonnummer"}, {"name": "email", "title": "E-Mail"}]'>
-                    <my-grid-data items="{{items}}" class="dataProvider"></my-grid-data>
-                    <div class="filterContainer">
-                      <p>Filter</p>
+                  <!--<my-grid-view id="demo-grid" items="{{items}}" columns='[{"name": "firstName", "title": "Vorname"}, {"name": "lastName", "title": "Nachname"}, {"name": "street", "title": "Straße"}, {"name": "city", "title": "Stadt"}, {"name": "state", "title": "Bundesland"}, {"name": "zipcode", "title": "PLZ"}, {"name": "country", "title": "Land"}, {"name": "phone", "title": "Telefonnummer"}, {"name": "email", "title": "E-Mail"}]'>-->
+                    <!--<my-grid-data items="{{items}}" class="dataProvider"></my-grid-data>-->
+                    <!--<div class="filterContainer">-->
+                      <!--<p>Filter</p>-->
 
-                      <paper-input-container width="10px" always-float-label>
-                        <label>Eventdatum</label>
-                        <input is="iron-input" type="text" value="{{filter.date}}" placeholder="Datum eingeben">
-                        <paper-icon-button suffix icon="today" alt="" title="" >
-                        </paper-icon-button>
-                      </paper-input-container>
-                      <my-dropdown-menu label="Treffpunkt" placeholder="Treffpunkt auswählen" url$="{{serviceUrl}}/events/meeting-points"></my-dropdown-menu>
-                      <my-dropdown-menu label="Thema" placeholder="Thema auswählen" url$="{{serviceUrl}}/events/topics"></my-dropdown-menu>
-                      <my-dropdown-menu label="Eventtyp" placeholder="Eventtyp auswählen" url$="{{serviceUrl}}/events/types"></my-dropdown-menu>
-                    </div>
-                  </my-grid-view>
-              </paper-material>
+                      <!--<paper-input-container width="10px" always-float-label>-->
+                        <!--<label>Eventdatum</label>-->
+                        <!--<input is="iron-input" type="text" value="{{filter.date}}" placeholder="Datum eingeben">-->
+                        <!--<paper-icon-button suffix icon="today" alt="" title="" >-->
+                        <!--</paper-icon-button>-->
+                      <!--</paper-input-container>-->
+                      <!--<my-dropdown-menu label="Treffpunkt" placeholder="Treffpunkt auswählen" url$="{{serviceUrl}}/events/meeting-points"></my-dropdown-menu>-->
+                      <!--<my-dropdown-menu label="Thema" placeholder="Thema auswählen" url$="{{serviceUrl}}/events/topics"></my-dropdown-menu>-->
+                      <!--<my-dropdown-menu label="Eventtyp" placeholder="Eventtyp auswählen" url$="{{serviceUrl}}/events/types"></my-dropdown-menu>-->
+                    <!--</div>-->
+                  <!--</my-grid-view>-->
+              <!--</paper-material>-->
 
               <paper-material elevation="1">
                 <my-greeting></my-greeting>
