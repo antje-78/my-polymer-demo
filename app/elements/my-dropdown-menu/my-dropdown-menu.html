@@ -1,12 +1,13 @@
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
 
 <dom-module id="my-dropdown-menu">
   <template>
     <my-json-request url="[[url]]" result="{{result}}" on-response="_response"></my-json-request>
-    <paper-dropdown-menu label="{{label}}" placeholder="{{placeholder}}" always-float-label toggles="true">
+    <paper-dropdown-menu label="[[label]]" placeholder="[[placeholder]]" always-float-label toggles="true">
       <paper-menu class="dropdown-content" multi>
-        <template is="dom-repeat" items="{{result}}">
+        <template is="dom-repeat" items="[[result]]">
           <paper-item>{{item.bezeichnung}}</paper-item>
         </template>
       </paper-menu>

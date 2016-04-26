@@ -42,7 +42,7 @@
         }
       }
 
-      div.grid-container.grid-loading-data vaadin-grid:after {
+      #grid-container.grid-loading-data vaadin-grid:after {
         -webkit-animation: grid-spin-360 400ms linear infinite;
         animation: grid-spin-360 400ms linear infinite;
         border: 2px solid #03A9F4;
@@ -61,15 +61,10 @@
         z-index: 9;
       }
     </style>
-    <div class="grid-container">
-      <vaadin-grid id="grid" items="{{items}}">
-        <table>
-          <colgroup>
-            <template is="dom-repeat" items="{{grid.columns}}" as="column">
-              <col name="{{column.name}}">
-            </template>
-          </colgroup>
-        </table>
+    <div id="grid-container">
+      <my-remote-grid-data url="[[url]]" items="{{items}}"></my-remote-grid-data>
+
+      <vaadin-grid id="grid" items="{{items}}" selection-mode="disabled">
       </vaadin-grid>
     </div>
   </template>
@@ -79,7 +74,13 @@
         is: 'my-grid',
 
         properties: {
-          items: Array,
+          items: {
+            type: Array,
+            notify: true
+          },
+
+          url: String,
+
           columns: {
             type: Array,
             notify: true
@@ -87,8 +88,9 @@
         },
 
         listeners: {
-          'refreshGrid': '_refreshGrid',
-          'dataLoaded': '_dataLoaded'
+          'refresh': '_refreshGrid',
+          'columns-changed': '_columnsChanged',
+          'items-changed': '_itemsChanged'
         },
 
         created: function (e) {
@@ -101,23 +103,34 @@
 
         attached: function () {
           console.log(this.localName + ' was attached!');
-          var vaadin_grid = this.querySelector('vaadin-grid');
-//          vaadin_grid.header.addRow();
-          for(var i = 0; i < this.columns.length; i++) {
-            vaadin_grid.columns[i] = { "name": this.columns[i].name, "title": this.columns[i].title };
-            vaadin_grid.columns[i].textContent = this.columns[i].title;
-            vaadin_grid.header.getCell(0, i).data = this.columns.title;
-          }
-
         },
 
         detached: function () {
-          window.addEventListener('WebComponentsReady', function () {
-            var grid = document.querySelector("vaadin-grid");
-            if (grid == undefined)
+
+        },
+
+        _columnsChanged: function () {
+          console.log(this.localName + ' columnsChanged fired!');
+          var vaadin_grid = this.querySelector('vaadin-grid');
+          for(var i = 0; i < this.columns.length; i++)
+          {
+            vaadin_grid.columns[i] = { "name": this.columns[i].propertyName, "hidable": this.columns[i].hidable, "hidden": this.columns[i].hidden, "sortable": this.columns[i].sortable };
+          }
+
+          vaadin_grid.then(function () {
+            var vaadin_grid = document.querySelector("vaadin-grid");
+            var grid = document.querySelector("my-grid");
+            if (vaadin_grid == undefined || grid == undefined || grid == null || grid.columns == null)
               return;
-            grid.fire('refresh');
+            for(var i = 0; i < grid.columns.length; i++) {
+              console.log('Header-Cell 0,'+ i + ': ' , vaadin_grid.header.getCell(0, i));
+              vaadin_grid.header.getCell(0, i).content = grid.columns[i].name;
+            }
           });
+        },
+
+        _itemsChanged: function () {
+          grid.toggleClass('grid-loading-data', false, document.querySelector("#grid-container"));
         },
 
         _refreshGrid: function(){
@@ -125,14 +138,13 @@
           var grid = document.querySelector("vaadin-grid");
           if (grid == undefined)
             return;
+          this.toggleClass('grid-loading-data', true, document.querySelector("#grid-container"));
           grid.items = [{}];
-          this.toggleClass('grid-loading-data', true, document.querySelector("grid-container"));
-          this.fire('loadData-' + this.getAttribute('id'), { 'grid' : grid });
+//          this.fire('loadData-' + this.getAttribute('id'), { 'grid' : grid });
         },
 
         _dataLoaded: function() {
           grid.items = this.items == undefined ? [] : this.items;
-          grid.toggleClass('grid-loading-data', false, document.querySelector("grid-container"));
         },
 
         updateItems: function () {

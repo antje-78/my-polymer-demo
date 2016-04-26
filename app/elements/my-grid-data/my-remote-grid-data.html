@@ -1,6 +1,6 @@
-<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/polymer/polymer.html">
 
-<dom-module id="my-json-request">
+<dom-module id="my-remote-grid-data">
   <template>
     <iron-ajax id="jsonrequest" url="[[url]]"
                contentType="text/json"
@@ -8,46 +8,43 @@
                handleAs="json"
                verbose="true"
                on-response="_response" on-request="_request"></iron-ajax>
-    <!--<my-list items="[[result]]"></my-list>-->
   </template>
   <script>
-    HTMLImports.whenReady(function(){
+    HTMLImports.whenReady(function () {
       Polymer({
-        is: 'my-json-request',
+        is: 'my-remote-grid-data',
+
+        listeners: {
+          'request':  '_request',
+          'response': '_response',
+          'refresh':  '_refresh'
+        },
 
         properties: {
           url: String,
 
-          parameters: {
-            type: Object
-          },
-          result: {
+          items: {
             notify: true
           }
         },
 
-        listeners: {
-          'request':  '_request',
-          'response': '_response'
-        },
+        attached: function() {
 
-        attached: function () {
-          this.$.jsonrequest.generateRequest();
-        },
-
-        urlChanged: function () {
-          console.log(this.localName + ' url changed!');
         },
 
         _request: function () {
           console.log(this.localName + ' request fired!');
         },
 
+        _refresh: function(e, filters) {
+          this.$.jsonrequest.generateRequest();
+        },
+
         _response: function(e) {
           console.log(this.localName + ' response fired!' + e.detail.response);
-          this.result = e.detail.response;
+          this.items = e.detail.response;
         }
-      });
+      })
     });
   </script>
 </dom-module>

@@ -15,12 +15,12 @@
     <div class="layout horizontal layout-start">
       <paper-input-container always-float-label>
         <label>Eventdatum von</label>
-        <input is="iron-input" type="text" value="{{dateFormat(dateFrom, 'dddd\, DD. MMMM YYYY')}}" placeholder="Datum eingeben">
+        <input is="iron-input" type="text" value="[[dateFormat(dateFrom, 'dddd\, DD. MMMM YYYY')]]" placeholder="Datum eingeben">
         <paper-icon-button suffix icon="today" alt="" title="" on-tap="showDateFromDialog"></paper-icon-button>
       </paper-input-container>
 
       <paper-dialog id="dateFromDialog" class="paper-date-picker-dialog" modal on-iron-overlay-closed="dismissDateFromDialog">
-        <paper-date-picker id="dateFromPicker" date="[[dateFrom]]" locale="de"></paper-date-picker>
+        <paper-date-picker id="dateFromPicker" locale="de"></paper-date-picker>
         <div class="buttons">
           <paper-button dialog-dismiss>Cancel</paper-button>
           <paper-button dialog-confirm>OK</paper-button>
@@ -29,12 +29,12 @@
       &nbsp;
       <paper-input-container always-float-label>
         <label>Eventdatum bis</label>
-        <input is="iron-input" type="text" value="{{dateFormat(dateTo, 'dddd\, DD. MMMM YYYY')}}" placeholder="Datum eingeben">
+        <input is="iron-input" type="text" value="[[dateFormat(dateTo, 'dddd\, DD. MMMM YYYY')]]" placeholder="Datum eingeben">
         <paper-icon-button suffix icon="today" alt="" title="" on-tap="showDateToDialog"></paper-icon-button>
       </paper-input-container>
 
       <paper-dialog id="dateToDialog" class="paper-date-picker-dialog" modal on-iron-overlay-closed="dismissDateToDialog">
-        <paper-date-picker id="dateToPicker" date="[[dateTo]]" locale="de"></paper-date-picker>
+        <paper-date-picker id="dateToPicker" locale="de"></paper-date-picker>
         <div class="buttons">
           <paper-button dialog-dismiss>Cancel</paper-button>
           <paper-button dialog-confirm>OK</paper-button>
@@ -42,9 +42,9 @@
       </paper-dialog>
     </div>
 
-    <my-dropdown-menu id="meeting-points-dropdown" label="Treffpunkt" placeholder="Treffpunkt auswählen" url$="{{url}}/time-sheet/meetingPointList"></my-dropdown-menu>
-    <my-dropdown-menu id="topics-dropdown" label="Thema" placeholder="Thema auswählen" url$="{{url}}/time-sheet/topicList"></my-dropdown-menu>
-    <my-dropdown-menu id="event-types-dropdown" label="Eventtyp" placeholder="Eventtyp auswählen" url$="{{url}}/time-sheet/eventTypeList"></my-dropdown-menu>
+    <my-dropdown-menu id="meeting-points-dropdown" label="Treffpunkt" placeholder="Treffpunkt auswählen" url$="[[url]]/time-sheet/meetingPointList"></my-dropdown-menu>
+    <my-dropdown-menu id="topics-dropdown" label="Thema" placeholder="Thema auswählen" url$="[[url]]/time-sheet/topicList"></my-dropdown-menu>
+    <my-dropdown-menu id="event-types-dropdown" label="Eventtyp" placeholder="Eventtyp auswählen" url$="[[url]]/time-sheet/eventTypeList"></my-dropdown-menu>
     <paper-dropdown-menu id="ressources-dropdown" label="Ressourcen" placeholder="Ressourcen auswählen">
       <div class="layout horizontal layout-start dropdown-content">
         <paper-menu class="dropdown-content" multi>
@@ -62,37 +62,37 @@
         is: 'my-filter',
 
         properties: {
+          filters: {
+            type: Object,
+            value: {},
+            notify: true
+          },
+
           dateFrom: {
             type: Date,
             value: new Date(),
-            notify: true
+            observer: '_dateFromChanged'
           },
 
           dateTo: {
             type: Date,
             value: new Date(),
-            notify: true
+            observer: '_dateToChanged'
           },
 
           meetingPoints: {
-            type: Array,
-            notify: true
+            type: Array
           },
 
           topics: {
-            type: Array,
-            notify: true
+            type: Array
           },
 
           eventTypes: {
-            type: Array,
-            notify: true
+            type: Array
           },
 
-          url: {
-            type: String,
-            notify: true
-          }
+          url: String
         },
 
       listeners: {
@@ -107,9 +107,8 @@
 
       dismissDateFromDialog: function (e , data) {
         console.log(this.localName + ' dismissDateFromDialog clicked!');
-        if (e.detail.confirmed) {
+        if (e.detail.confirmed)
           this.dateFrom = this.$.dateFromPicker.date;
-        }
       },
 
       showDateToDialog: function () {
@@ -119,9 +118,18 @@
 
       dismissDateToDialog: function (e , data) {
         console.log(this.localName + ' dismissDateToDialog clicked!');
-        if (e.detail.confirmed) {
+        if (e.detail.confirmed)
           this.dateTo = this.$.dateToPicker.date;
-        }
+      },
+
+      _dateFromChanged: function (newValue, oldValue) {
+        console.log(this.localName + ' _dateFromChanged fired!');
+        this.filters.dateFrom = newValue == undefined || newValue == null ? null : newValue.getTime();
+      },
+
+      _dateToChanged: function (newValue, oldValue) {
+        console.log(this.localName + ' _dateToChanged fired!');
+        this.filters.dateTo = newValue == undefined || newValue == null ? null : newValue.getTime();
       },
 
       dateFormat: function(date, format) {
@@ -130,6 +138,7 @@
 
       onSelect: function (e) {
         console.log(this.localName + ' onSelect fired!', e, e.detail);
+
       },
 
       onDeselect: function (e) {
