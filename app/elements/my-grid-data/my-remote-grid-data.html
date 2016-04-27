@@ -3,6 +3,7 @@
 <dom-module id="my-remote-grid-data">
   <template>
     <iron-ajax id="jsonrequest" url="[[url]]"
+               params="[[params]]"
                contentType="text/json"
                deboundDuration="30000"
                handleAs="json"
@@ -23,6 +24,11 @@
         properties: {
           url: String,
 
+          params: {
+            type: Object,
+            value: { dateFrom: 1459468800000, dateTo: 1461542400000, excludeCanceledEvents: true, eventTyps: '1851055,24368911851061' }
+          },
+
           items: {
             notify: true
           }
@@ -37,6 +43,9 @@
         },
 
         _refresh: function(e, filters) {
+          for (var name in filters) {
+            this.params[name] = filters[name];
+          }
           this.$.jsonrequest.generateRequest();
         },
 

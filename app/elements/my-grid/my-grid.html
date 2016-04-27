@@ -10,6 +10,23 @@
       #loadingIndicatorRow .show {
         display: block;
       }
+
+      vaadin-grid {
+        -webkit-user-select: initial;
+      }
+
+      vaadin-grid /deep/.vaadin-grid-header.vaadin-grid th.vaadin-grid {
+        padding-right: 0;
+      }
+
+      vaadin-grid /deep/.vaadin-grid-body.vaadin-grid td.vaadin-grid {
+        padding-right: 0;
+      }
+
+      vaadin-grid /deep/.vaadin-grid-footer.vaadin-grid td.vaadin-grid {
+        padding-right: 0;
+      }
+
       vaadin-grid table:before {
         -webkit-animation: vaadin-grid-spin-360 400ms linear infinite;
         animation: vaadin-grid-spin-360 400ms linear infinite;

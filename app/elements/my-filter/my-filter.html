@@ -5,6 +5,7 @@
 <link rel="import" href="../../bower_components/paper-date-picker/paper-date-picker.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-toggle-button/paper-toggle-button.html">
 <link rel="import" href="../../iron-flex-layout/iron-flex-layout-classes.html">
 
 
@@ -13,48 +14,59 @@
     <style is="custom-style" include="iron-flex iron-flex-alignment"></style>
 
     <div class="layout horizontal layout-start">
-      <paper-input-container always-float-label>
-        <label>Eventdatum von</label>
-        <input is="iron-input" type="text" value="[[dateFormat(dateFrom, 'dddd\, DD. MMMM YYYY')]]" placeholder="Datum eingeben">
-        <paper-icon-button suffix icon="today" alt="" title="" on-tap="showDateFromDialog"></paper-icon-button>
-      </paper-input-container>
+      <div class="layout vertical layout-start">
+        <paper-input-container always-float-label>
+          <label>Eventdatum von</label>
+          <input is="iron-input" type="text" value="{{dateFromInput::input}}" placeholder="Datum eingeben">
+          <iron-icon suffix icon="today" alt="" title="" on-tap="showDateFromDialog"></iron-icon>
+        </paper-input-container>
 
-      <paper-dialog id="dateFromDialog" class="paper-date-picker-dialog" modal on-iron-overlay-closed="dismissDateFromDialog">
-        <paper-date-picker id="dateFromPicker" locale="de"></paper-date-picker>
-        <div class="buttons">
-          <paper-button dialog-dismiss>Cancel</paper-button>
-          <paper-button dialog-confirm>OK</paper-button>
-        </div>
-      </paper-dialog>
-      &nbsp;
-      <paper-input-container always-float-label>
-        <label>Eventdatum bis</label>
-        <input is="iron-input" type="text" value="[[dateFormat(dateTo, 'dddd\, DD. MMMM YYYY')]]" placeholder="Datum eingeben">
-        <paper-icon-button suffix icon="today" alt="" title="" on-tap="showDateToDialog"></paper-icon-button>
-      </paper-input-container>
+        <paper-dialog id="dateFromDialog" class="paper-date-picker-dialog" modal on-iron-overlay-closed="dismissDateFromDialog">
+          <paper-date-picker id="dateFromPicker" locale="de"></paper-date-picker>
+          <div class="buttons">
+            <paper-button dialog-dismiss>Cancel</paper-button>
+            <paper-button dialog-confirm>OK</paper-button>
+          </div>
+        </paper-dialog>
 
-      <paper-dialog id="dateToDialog" class="paper-date-picker-dialog" modal on-iron-overlay-closed="dismissDateToDialog">
-        <paper-date-picker id="dateToPicker" locale="de"></paper-date-picker>
-        <div class="buttons">
-          <paper-button dialog-dismiss>Cancel</paper-button>
-          <paper-button dialog-confirm>OK</paper-button>
-        </div>
-      </paper-dialog>
-    </div>
-
-    <my-dropdown-menu id="meeting-points-dropdown" label="Treffpunkt" placeholder="Treffpunkt auswählen" url$="[[url]]/time-sheet/meetingPointList"></my-dropdown-menu>
-    <my-dropdown-menu id="topics-dropdown" label="Thema" placeholder="Thema auswählen" url$="[[url]]/time-sheet/topicList"></my-dropdown-menu>
-    <my-dropdown-menu id="event-types-dropdown" label="Eventtyp" placeholder="Eventtyp auswählen" url$="[[url]]/time-sheet/eventTypeList"></my-dropdown-menu>
-    <paper-dropdown-menu id="ressources-dropdown" label="Ressourcen" placeholder="Ressourcen auswählen">
-      <div class="layout horizontal layout-start dropdown-content">
-        <paper-menu class="dropdown-content" multi>
-          <paper-item>Ressource 1</paper-item>
-        </paper-menu>
-        <paper-menu class="dropdown-content" multi>
-          <paper-item>Ressource 2</paper-item>
-        </paper-menu>
+        <my-dropdown-menu id="meeting-points-dropdown" label="Treffpunkt" placeholder="Treffpunkt auswählen" url$="[[url]]/time-sheet/meetingPointList"></my-dropdown-menu>
       </div>
-    </paper-dropdown-menu>
+
+      <div class="layout vertical layout-start">
+        <paper-input-container always-float-label>
+          <label>Eventdatum bis</label>
+          <input is="iron-input" type="text" value="{{dateToInput::input}}" placeholder="Datum eingeben">
+          <iron-icon suffix icon="today" alt="" title="" on-tap="showDateToDialog"></iron-icon>
+        </paper-input-container>
+
+        <paper-dialog id="dateToDialog" class="paper-date-picker-dialog" modal on-iron-overlay-closed="dismissDateToDialog">
+          <paper-date-picker id="dateToPicker" locale="de"></paper-date-picker>
+          <div class="buttons">
+            <paper-button dialog-dismiss>Cancel</paper-button>
+            <paper-button dialog-confirm>OK</paper-button>
+          </div>
+        </paper-dialog>
+
+        <my-dropdown-menu id="topics-dropdown" label="Thema" placeholder="Thema auswählen" url$="[[url]]/time-sheet/topicList"></my-dropdown-menu>
+      </div>
+
+      <div class="layout vertical layout-start">
+        <my-dropdown-menu id="event-types-dropdown" label="Eventtyp" placeholder="Eventtyp auswählen" url$="[[url]]/time-sheet/eventTypeList"></my-dropdown-menu>
+        <paper-dropdown-menu id="ressources-dropdown" label="Ressourcen" placeholder="Ressourcen auswählen">
+          <div class="layout horizontal layout-start dropdown-content">
+            <paper-menu class="dropdown-content" multi>
+              <paper-item>Ressource 1</paper-item>
+            </paper-menu>
+            <paper-menu class="dropdown-content" multi>
+              <paper-item>Ressource 2</paper-item>
+            </paper-menu>
+          </div>
+        </paper-dropdown-menu>
+      </div>
+      <div class="layout vertical layout-start">
+        <paper-toggle-button name="excludeCanceledEventsToggle" checked="{{filters.excludeCanceledEvents}}">Ausgefallene Events ausblenden</paper-toggle-button>
+      </div>
+    </div>
   </template>
   <script>
     HTMLImports.whenReady(function () {
@@ -64,8 +76,12 @@
         properties: {
           filters: {
             type: Object,
-            value: {},
-            notify: true
+            value: { excludeCanceledEvents: true }
+          },
+
+          dateFromInput: {
+            type: String,
+            observer: '_dateFromInputChanged'
           },
 
           dateFrom: {
@@ -79,6 +95,12 @@
             value: new Date(),
             observer: '_dateToChanged'
           },
+
+          dateToInput: {
+            type: String,
+            observer: '_dateToInputChanged'
+          },
+
 
           meetingPoints: {
             type: Array
@@ -94,6 +116,10 @@
 
           url: String
         },
+
+//      observers: [
+//        '_dateFromChanged(dateFrom)'
+//      ],
 
       listeners: {
           'iron-select': 'onSelect',
@@ -122,23 +148,32 @@
           this.dateTo = this.$.dateToPicker.date;
       },
 
-      _dateFromChanged: function (newValue, oldValue) {
-        console.log(this.localName + ' _dateFromChanged fired!');
+      _dateFromInputChanged: function(newValue, oldValue){
+        console.log(this.localName + ' _dateFromInputChanged fired', newValue, oldValue);
+        newValue.split();
+      },
+
+     _dateFromChanged: function (newValue, oldValue) {
+        console.log(this.localName + ' _dateFromChanged fired!', newValue, oldValue);
         this.filters.dateFrom = newValue == undefined || newValue == null ? null : newValue.getTime();
+        this.dateFromInput = this.dateFormat(this.dateFrom, 'DD. MMMM YYYY');
       },
 
       _dateToChanged: function (newValue, oldValue) {
         console.log(this.localName + ' _dateToChanged fired!');
         this.filters.dateTo = newValue == undefined || newValue == null ? null : newValue.getTime();
+        this.dateToInput = this.dateFormat(this.dateTo, 'DD. MMMM YYYY');
+      },
+      _dateToInputChanged: function(newValue, oldValue){
+          console.log(this.localName + ' _dateToInputChanged fired', newValue, oldValue);
       },
 
       dateFormat: function(date, format) {
           return moment(date).locale('de').format(format);
-        },
+      },
 
       onSelect: function (e) {
         console.log(this.localName + ' onSelect fired!', e, e.detail);
-
       },
 
       onDeselect: function (e) {
