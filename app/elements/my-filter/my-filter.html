@@ -6,65 +6,43 @@
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../../bower_components/paper-toggle-button/paper-toggle-button.html">
-<link rel="import" href="../../iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 
 
 <dom-module id="my-filter">
   <template>
-    <style is="custom-style" include="iron-flex iron-flex-alignment"></style>
+    <style is="custom-style" include="iron-flex iron-flex-alignment iron-flex-reverse">
+
+      div.layout.vertical {
+        margin-right: 10px;
+      }
+    </style>
 
     <div class="layout horizontal layout-start">
       <div class="layout vertical layout-start">
-        <paper-input-container always-float-label>
-          <label>Eventdatum von</label>
-          <input is="iron-input" type="text" value="{{dateFromInput::input}}" placeholder="Datum eingeben">
-          <iron-icon suffix icon="today" alt="" title="" on-tap="showDateFromDialog"></iron-icon>
-        </paper-input-container>
-
-        <paper-dialog id="dateFromDialog" class="paper-date-picker-dialog" modal on-iron-overlay-closed="dismissDateFromDialog">
-          <paper-date-picker id="dateFromPicker" locale="de"></paper-date-picker>
-          <div class="buttons">
-            <paper-button dialog-dismiss>Cancel</paper-button>
-            <paper-button dialog-confirm>OK</paper-button>
-          </div>
-        </paper-dialog>
-
-        <my-dropdown-menu id="meeting-points-dropdown" label="Treffpunkt" placeholder="Treffpunkt auswählen" url$="[[url]]/time-sheet/meetingPointList"></my-dropdown-menu>
+        <my-date-picker id="dateFromDatepicker" label="Eventdatum von" placeholder="Datum eingeben" date="{{datefrom}}"></my-date-picker>
+        <my-dropdown-menu id="meeting-points-dropdown" label="Treffpunkt" placeholder="Treffpunkt auswählen" url$="[[url]]/time-sheet/meetingPointList" values="{{meetingpoints}}"></my-dropdown-menu>
       </div>
 
       <div class="layout vertical layout-start">
-        <paper-input-container always-float-label>
-          <label>Eventdatum bis</label>
-          <input is="iron-input" type="text" value="{{dateToInput::input}}" placeholder="Datum eingeben">
-          <iron-icon suffix icon="today" alt="" title="" on-tap="showDateToDialog"></iron-icon>
-        </paper-input-container>
-
-        <paper-dialog id="dateToDialog" class="paper-date-picker-dialog" modal on-iron-overlay-closed="dismissDateToDialog">
-          <paper-date-picker id="dateToPicker" locale="de"></paper-date-picker>
-          <div class="buttons">
-            <paper-button dialog-dismiss>Cancel</paper-button>
-            <paper-button dialog-confirm>OK</paper-button>
-          </div>
-        </paper-dialog>
-
+        <my-date-picker id="dateToDatepicker" label="Eventdatum bis" placeholder="Datum eingeben" date="{{dateto}}"></my-date-picker>
         <my-dropdown-menu id="topics-dropdown" label="Thema" placeholder="Thema auswählen" url$="[[url]]/time-sheet/topicList"></my-dropdown-menu>
       </div>
-
-      <div class="layout vertical layout-start">
-        <my-dropdown-menu id="event-types-dropdown" label="Eventtyp" placeholder="Eventtyp auswählen" url$="[[url]]/time-sheet/eventTypeList"></my-dropdown-menu>
-        <paper-dropdown-menu id="ressources-dropdown" label="Ressourcen" placeholder="Ressourcen auswählen">
-          <div class="layout horizontal layout-start dropdown-content">
-            <paper-menu class="dropdown-content" multi>
-              <paper-item>Ressource 1</paper-item>
-            </paper-menu>
-            <paper-menu class="dropdown-content" multi>
-              <paper-item>Ressource 2</paper-item>
-            </paper-menu>
-          </div>
-        </paper-dropdown-menu>
-      </div>
-      <div class="layout vertical layout-start">
-        <paper-toggle-button name="excludeCanceledEventsToggle" checked="{{filters.excludeCanceledEvents}}">Ausgefallene Events ausblenden</paper-toggle-button>
+      <div class="layout vertical-reverse layout-start">
+        <div class="layout horizontal layout-start">
+          <my-dropdown-menu id="event-types-dropdown" label="Eventtyp" placeholder="Eventtyp auswählen" url$="[[url]]/time-sheet/eventTypeList"></my-dropdown-menu>
+          <paper-dropdown-menu id="ressources-dropdown" label="Ressourcen" placeholder="Ressourcen auswählen">
+            <div class="layout horizontal layout-start dropdown-content">
+              <paper-menu class="dropdown-content" multi>
+                <paper-item>Ressource 1</paper-item>
+              </paper-menu>
+              <paper-menu class="dropdown-content" multi>
+                <paper-item>Ressource 2</paper-item>
+              </paper-menu>
+            </div>
+          </paper-dropdown-menu>
+          <paper-toggle-button name="excludeCanceledEventsToggle" checked="{{filters.excludeCanceledEvents}}">Ausgefallene Events ausblenden</paper-toggle-button>
+        </div>
       </div>
     </div>
   </template>
@@ -76,34 +54,23 @@
         properties: {
           filters: {
             type: Object,
-            value: { excludeCanceledEvents: true }
+            notify: true
           },
 
-          dateFromInput: {
-            type: String,
-            observer: '_dateFromInputChanged'
-          },
-
-          dateFrom: {
+          datefrom: {
             type: Date,
-            value: new Date(),
-            observer: '_dateFromChanged'
+            observer: 'onDateFromChanged'
           },
 
-          dateTo: {
-            type: Date,
-            value: new Date(),
-            observer: '_dateToChanged'
+          dateto: {
+            type: Object,
+            notify: true,
+            observer: 'onDateToChanged'
           },
 
-          dateToInput: {
-            type: String,
-            observer: '_dateToInputChanged'
-          },
-
-
-          meetingPoints: {
-            type: Array
+          meetingpoints: {
+            type: Array,
+            observer: 'onMeetingpointsSelected'
           },
 
           topics: {
@@ -117,67 +84,19 @@
           url: String
         },
 
-//      observers: [
-//        '_dateFromChanged(dateFrom)'
-//      ],
-
-      listeners: {
-          'iron-select': 'onSelect',
-          'iron-deselect': 'onDeselect'
+      onDateFromChanged: function (newValue, oldValue) {
+        console.log(this.localName + ' onDateFromChanged fired!');
+        this.set('filters.dateFrom', newValue.getTime());
       },
 
-      showDateFromDialog: function () {
-          console.log(this.localName + ' showDateFromDialog clicked!');
-          this.$.dateFromDialog.toggle();
+      onDateToChanged: function(newValue, oldValue) {
+        console.log(this.localName + ' onDateToChanged fired!');
+        this.set('filters.dateTo', newValue.getTime());
       },
 
-      dismissDateFromDialog: function (e , data) {
-        console.log(this.localName + ' dismissDateFromDialog clicked!');
-        if (e.detail.confirmed)
-          this.dateFrom = this.$.dateFromPicker.date;
-      },
-
-      showDateToDialog: function () {
-          console.log(this.localName + ' showDateToDialog clicked!');
-          this.$.dateToDialog.toggle();
-      },
-
-      dismissDateToDialog: function (e , data) {
-        console.log(this.localName + ' dismissDateToDialog clicked!');
-        if (e.detail.confirmed)
-          this.dateTo = this.$.dateToPicker.date;
-      },
-
-      _dateFromInputChanged: function(newValue, oldValue){
-        console.log(this.localName + ' _dateFromInputChanged fired', newValue, oldValue);
-        newValue.split();
-      },
-
-     _dateFromChanged: function (newValue, oldValue) {
-        console.log(this.localName + ' _dateFromChanged fired!', newValue, oldValue);
-        this.filters.dateFrom = newValue == undefined || newValue == null ? null : newValue.getTime();
-        this.dateFromInput = this.dateFormat(this.dateFrom, 'DD. MMMM YYYY');
-      },
-
-      _dateToChanged: function (newValue, oldValue) {
-        console.log(this.localName + ' _dateToChanged fired!');
-        this.filters.dateTo = newValue == undefined || newValue == null ? null : newValue.getTime();
-        this.dateToInput = this.dateFormat(this.dateTo, 'DD. MMMM YYYY');
-      },
-      _dateToInputChanged: function(newValue, oldValue){
-          console.log(this.localName + ' _dateToInputChanged fired', newValue, oldValue);
-      },
-
-      dateFormat: function(date, format) {
-          return moment(date).locale('de').format(format);
-      },
-
-      onSelect: function (e) {
-        console.log(this.localName + ' onSelect fired!', e, e.detail);
-      },
-
-      onDeselect: function (e) {
-        console.log(this.localName + ' onDeselect fired!', e, e.detail);
+      onMeetingpointsSelected: function (newValue, oldValue) {
+        console.log(this.localName + ' onMeetingpointsSelected fired!', e, e.detail, e.detail);
+        this.set('filters.meetingPoints', newValue.toString);
       }
 
     });

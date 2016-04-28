@@ -79,8 +79,6 @@
       }
     </style>
     <div id="grid-container">
-      <my-remote-grid-data url="[[url]]" items="{{items}}"></my-remote-grid-data>
-
       <vaadin-grid id="grid" items="{{items}}" selection-mode="disabled">
       </vaadin-grid>
     </div>
@@ -91,17 +89,20 @@
         is: 'my-grid',
 
         properties: {
-          items: {
-            type: Array,
-            notify: true
-          },
+          items: Object,
 
-          url: String,
+          columns: Object,
 
-          columns: {
-            type: Array,
-            notify: true
-          }
+//          items: {
+//            type: Array,
+//            notify: true
+//          },
+//
+//
+//          columns: {
+//            type: Array,
+//            notify: true
+//          }
         },
 
         listeners: {

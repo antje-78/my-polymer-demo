@@ -7,13 +7,21 @@
   <template>
     <style is="custom-style" include="shared-style">
     </style>
+
+    <iron-media-query full query="print" query-matches="{{print}}"></iron-media-query>
+    <my-json-request url$="{{url}}/time-sheet/time-sheet-columns" result="{{columns}}"></my-json-request>
+
     <div class="">
       <content selector=".filterContainer"></content>
     </div>
 
     <iron-icon id="refreshBtn" icon="refresh" on-tap="_refreshGrid"></iron-icon>
 
-    <my-grid url="[[url]]" items="{{items}}" columns="{{columns}}">
+    <my-remote-grid-data url$="[[url]]/time-sheet/time-sheet-data" items="{{items}}" params="{{filters}}"></my-remote-grid-data>
+    <template is="dom-repeat" items="{{columns}}" as="column">
+      {{column}},
+    </template>
+    <my-grid items="{{items}}" columns="{{columns}}">
     </my-grid>
   </template>
   <script>
@@ -25,6 +33,11 @@
 
         url: String,
 
+        filters: {
+          type: Object,
+          notify: true
+        },
+
         columns: {
           type: Array,
           notify: true
@@ -33,7 +46,7 @@
         iconRotate: {
           type: Number,
           value: 0
-        }
+        },
 
 //        columns: {
 //          type: Array,

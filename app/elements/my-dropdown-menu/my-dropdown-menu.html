@@ -1,16 +1,33 @@
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/iron-selector/iron-selector.html">
 <link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
 
 <dom-module id="my-dropdown-menu">
   <template>
+    <style is="custom-style" include="shared-styles">
+      paper-item {
+        border-bottom: 1px solid var(--divider-color);
+      }
+      paper-item:focus:before {
+        background-color: var(--primary-background-color);
+      }
+      .iron-selected {
+        background-color: var(--divider-color);
+      }
+    </style>
     <my-json-request url="[[url]]" result="{{result}}" on-response="_response"></my-json-request>
     <paper-dropdown-menu label="[[label]]" placeholder="[[placeholder]]" always-float-label toggles="true">
-      <paper-menu class="dropdown-content" multi>
-        <template is="dom-repeat" items="[[result]]">
-          <paper-item>{{item.bezeichnung}}</paper-item>
-        </template>
-      </paper-menu>
+      <div class="dropdown-content">
+      <iron-selector multi attr-for-selected="name" selected-items="{{values}}">
+          <template is="dom-repeat" items="[[result]]">
+            <paper-item name="{{item.id}}">{{item.bezeichnung}}</paper-item>
+          </template>
+      </iron-selector>
+      </div>
+      <!--<paper-menu class="dropdown-content" multi selected-items="{{values}}">-->
+
+      <!--</paper-menu>-->
     </paper-dropdown-menu>
   </template>
   <script>
@@ -31,7 +48,12 @@
 
           url: String,
 
-          result: Array
+          result: Array,
+
+          values: {
+            type: Array,
+            notify: true
+          }
         },
 
         listeners: {

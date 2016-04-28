@@ -1,0 +1,159 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-input/iron-input.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input-container.html">
+<link rel="import" href="../../bower_components/paper-date-picker/paper-date-picker.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+
+<dom-module id="my-date-picker">
+  <template>
+    <paper-input-container always-float-label>
+      <label>[[label]]</label>
+      {{dateFormat(date, 'DD. MMM YYYY')}}
+      <input id="datetextTxt" is="iron-input" type="text" value="{{datetext}}" placeholder="[[placeholder]]" on-keyup="_handleInput" on-blur="_handleInput">
+      <iron-icon suffix icon="[[icon]]" alt="" title="" on-tap="showDateDialog"></iron-icon>
+    </paper-input-container>
+
+    <paper-dialog id="dateDialog" class="paper-date-picker-dialog" modal on-iron-overlay-closed="dismissDateDialog">
+      <paper-date-picker id="datePicker" date="{{date}}" locale="[[locale]]"></paper-date-picker>
+      <div class="buttons">
+        <paper-button dialog-dismiss>Cancel</paper-button>
+        <paper-button dialog-confirm>OK</paper-button>
+      </div>
+    </paper-dialog>
+  </template>
+  <script>
+    HTMLImports.whenReady(function () {
+      Polymer({
+        is: 'my-date-picker',
+
+        properties: {
+          label: {
+            type: String,
+            value: 'Datum'
+          },
+
+          placeholder:  {
+            type: String,
+            value: 'Datum eingeben'
+          },
+
+          icon: {
+            type: String,
+            value: 'today'
+          },
+
+          locale: {
+            type: String,
+            value: 'de'
+          },
+
+          datetext: {
+            type: String,
+            notify: true,
+            observer: '_datetextChanged'
+          },
+
+          date: {
+            type: Date,
+            notify: true,
+            observer: '_dateChanged'
+          },
+
+          dateFormatPattern: {
+            type: String,
+            value: 'DD. MMMM YYYY'
+          }
+        },
+
+        showDateDialog: function () {
+          console.log(this.localName + ' showDateDialog clicked!');
+          this.$.dateDialog.toggle();
+        },
+
+        dismissDateDialog: function (e , data) {
+          console.log(this.localName + ' dismissDateDialog clicked!');
+          if (e.detail.confirmed)
+            this.datetext = this.dateFormat(this.$.datePicker.date, this.dateFormatPattern);
+        },
+
+        _datetextChanged: function(newValue, oldValue){
+          console.log(this.localName + ' _datetextChanged fired', newValue, oldValue);
+//          this.date = this._parseDate(newValue);
+        },
+
+        _dateChanged: function (newValue, oldValue) {
+          console.log(this.localName + ' _dateChanged fired!', newValue, oldValue);
+          this.$.datetextTxt.value = this.dateFormat(newValue, 'DD. MMMM YYYY');
+        },
+
+        _handleInput: function (e) {
+          if (e.type.toUpperCase() == 'KEYUP' && e.keyCode != 13)
+            return;
+          console.log(this.localName + ' _handleInput fired', e);
+          try {
+            var date = this._parseDate(e.target.value);
+            this.date = date == undefined || date == null ? this.date : date;
+          } catch (e) {}
+        },
+
+        _parseDate: function (newValue) {
+          var date = undefined;
+          var dateExpr = /(\d{1,2})[\. ]+(\w+|\d{1,2})[\. ]+(\d{2,4})/;
+          var convertedDate = newValue;
+          var month, parts;
+          if (dateExpr.test(newValue)) {
+            if ((parts = newValue.match(dateExpr)).length < 3 || (month= this._findMonth(parts[2])) == null || this._testDateValues(parts[1], parts[2], parts[3]))
+              return;
+            convertedDate = newValue.replace(dateExpr, month + '/$1/$3');
+            console.log('DateParts: ', convertedDate);
+            try { date = new Date(convertedDate) } catch (e) { date = undefined };
+          }
+          if ((dateExpr = /(\d{1,2})\/(\d{1,2})\/(\d{2,4})/).test(newValue)) {
+            if ((parts = newValue.match(dateExpr)).length < 3 || (month= this._findMonth(parts[2])) == null || this._testDateValues(parts[1], parts[2], parts[3]))
+              return;
+            try { date = new Date(newValue) } catch (e) { date = undefined };
+          }
+          return date;
+        },
+
+        _germanMonthNames: [],
+
+        _findMonth: function(month) {
+          if ( this._germanMonthNames.length == 0 ) {
+            for (var i = 1; i <= 12; i++) {
+              this._germanMonthNames[i] = moment(i + '/28/2016').locale('de').format('MMMM');
+            }
+          }
+          if (/\w+/.test(month)) {
+            for (var i = 1; i <= 12; i++) {
+              if (this._germanMonthNames[i] == month)
+                return i;
+            }
+          }
+
+          if (/\d{1,2}/.test(month) && parseInt(month) > 0 && parseInt(month) <= 12)
+            return month;
+          return null;
+        },
+
+        _testDateValues(day, month, year) {
+          if (day < 1 || day > 31)
+            return false;
+          if (month < 1 || month > 12)
+            return false;
+        },
+
+        dateFormat: function(date, format) {
+          return moment(date).locale(this.locale).format(format);
+        },
+
+        ready: function () {
+          if (this.date == undefined || this.date == null || !this.date.getTime)
+            this.$.datePicker = new Date();
+        }
+      })
+    })
+  </script>
+</dom-module>
