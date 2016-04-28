@@ -7,21 +7,21 @@
   <template>
     <style is="custom-style" include="shared-style">
     </style>
-    <p>{{serviceUrl}}</p>
     <iron-media-query full query="print" query-matches="{{print}}"></iron-media-query>
     <my-json-request url$="{{serviceUrl}}/time-sheet/time-sheet-columns" result="{{columns}}"></my-json-request>
 
     <div class="">
-      <content selector=".filterContainer"></content>
+      <!--<content selector=".filterContainer"></content>-->
+      <div class="filterContainer">
+        <p>Filter</p>
+        <my-filter url="{{serviceUrl}}" filters="{{filters}}" date-from="{{dateNow}}" date-to="{{dateNow}}"></my-filter>
+      </div>
     </div>
 
     <iron-icon id="refreshBtn" icon="refresh" on-tap="_refreshGrid"></iron-icon>
 
-    <my-remote-grid-data url$="[[serviceUrl]]/time-sheet/time-sheet-data" items="{{items}}" params="{{filters}}"></my-remote-grid-data>
+    <my-remote-grid-data url$="[[serviceUrl]]/time-sheet/time-sheet-data" items="{{items}}" filters="{{filters}}"></my-remote-grid-data>
     <p></p>
-    <template is="dom-repeat" items="{{columns}}" as="column">
-      {{column.name}},
-    </template>
     <my-grid items="{{items}}" columns="{{columns}}">
     </my-grid>
   </template>
@@ -36,9 +36,10 @@
 
         serviceUrl: String,
 
-        filters: {
-          type: Object
-        },
+//        filters: {
+//          type: Object,
+//          notify: true
+//        },
 
         columns: {
           type: Array,

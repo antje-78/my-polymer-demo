@@ -21,16 +21,16 @@
     <div class="layout horizontal layout-start">
       <div class="layout vertical layout-start">
         <my-date-picker id="dateFromDatepicker" label="Eventdatum von" placeholder="Datum eingeben" date="{{dateFrom}}"></my-date-picker>
-        <my-dropdown-menu id="meeting-points-dropdown" label="Treffpunkt" placeholder="Treffpunkt auswählen" url$="[[url]]/time-sheet/meetingPointList" values="{{meetingpoints}}"></my-dropdown-menu>
+        <my-dropdown-menu id="meeting-points-dropdown" label="Treffpunkt" placeholder="Treffpunkt auswählen" url$="[[url]]/time-sheet/meetingPointList" values="{{meetingPoints}}"></my-dropdown-menu>
       </div>
 
       <div class="layout vertical layout-start">
         <my-date-picker id="dateToDatepicker" label="Eventdatum bis" placeholder="Datum eingeben" date="{{dateTo}}"></my-date-picker>
-        <my-dropdown-menu id="topics-dropdown" label="Thema" placeholder="Thema auswählen" url$="[[url]]/time-sheet/topicList"></my-dropdown-menu>
+        <my-dropdown-menu id="topics-dropdown" label="Thema" placeholder="Thema auswählen" url$="[[url]]/time-sheet/topicList" values="{{topics}}"></my-dropdown-menu>
       </div>
       <div class="layout vertical-reverse layout-start">
         <div class="layout horizontal layout-start">
-          <my-dropdown-menu id="event-types-dropdown" label="Eventtyp" placeholder="Eventtyp auswählen" url$="[[url]]/time-sheet/eventTypeList"></my-dropdown-menu>
+          <my-dropdown-menu id="event-types-dropdown" label="Eventtyp" placeholder="Eventtyp auswählen" url$="[[url]]/time-sheet/eventTypeList" values="{{eventTyps}}"></my-dropdown-menu>
           <paper-dropdown-menu id="ressources-dropdown" label="Ressourcen" placeholder="Ressourcen auswählen">
             <div class="layout horizontal layout-start dropdown-content">
               <paper-menu class="dropdown-content" multi>
@@ -53,7 +53,9 @@
 
         properties: {
           filters: {
-            type: Object
+            type: Object,
+            value: { dateFrom: null, dateTo: null, excludeCanceledEvents: false, eventTyps: null, meetingPoints: null, topics: null },
+            notify: true
           },
 
           dateFrom: {
@@ -67,17 +69,19 @@
             observer: 'onDateToChanged'
           },
 
-          meetingpoints: {
+          meetingPoints: {
             type: Array,
             observer: 'onMeetingpointsSelected'
           },
 
           topics: {
-            type: Array
+            type: Array,
+            observer: 'onTopicsSelected'
           },
 
-          eventTypes: {
-            type: Array
+          eventTyps: {
+            type: Array,
+            observer: 'onEventTypesSelected'
           },
 
           url: String
@@ -94,8 +98,33 @@
       },
 
       onMeetingpointsSelected: function (newValue, oldValue) {
-        console.log(this.localName + ' onMeetingpointsSelected fired!', e, e.detail, e.detail);
-        this.set('filters.meetingPoints', newValue.toString);
+        console.log(this.localName + ' onMeetingpointsSelected fired!', newValue, oldValue);
+        var ids = '';
+        for (var i = 0; i < newValue.length; i++)
+        {
+          ids = ids + ( i > 0 ? ',' : '') + newValue[i].name;
+        }
+        this.set('filters.meetingPoints', ids);
+      },
+
+      onTopicsSelected: function (newValue, oldValue) {
+        console.log(this.localName + ' onTopicsSelected fired!', newValue, oldValue);
+        var ids = '';
+        for (var i = 0; i < newValue.length; i++)
+        {
+          ids = ids + ( i > 0 ? ',' : '') + newValue[i].name;
+        }
+        this.set('filters.topics', ids);
+      },
+
+      onEventTypesSelected: function (newValue, oldValue) {
+        console.log(this.localName + ' onEventTypesSelected fired!', newValue, oldValue);
+        var ids = '';
+        for (var i = 0; i < newValue.length; i++)
+        {
+          ids = ids + ( i > 0 ? ',' : '') + newValue[i].name;
+        }
+        this.set('filters.eventTyps', ids);
       }
 
     });

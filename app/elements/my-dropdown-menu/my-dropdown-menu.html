@@ -52,7 +52,8 @@
 
           values: {
             type: Array,
-            notify: true
+            notify: true,
+            observer: '_valuesChanged'
           }
         },
 
@@ -82,9 +83,11 @@
         _response: function (e) {
           console.log(this.localName + ' response fired!' + e.detail.response);
           this.result = e.detail.response;
+        },
+
+        _valuesChanged: function (newValue) {
+          console.log(this.localName + ' _valuesChanged fired!');
         }
-
-
       });
     });
   </script>

@@ -3,7 +3,7 @@
 <dom-module id="my-remote-grid-data">
   <template>
     <iron-ajax id="jsonrequest" url="[[url]]"
-               params="[[params]]"
+               params="{{filters}}"
                contentType="text/json"
                deboundDuration="30000"
                handleAs="json"
@@ -24,10 +24,8 @@
         properties: {
           url: String,
 
-          params: {
-            type: Object,
-            value: { dateFrom: 1459468800000, dateTo: 1461542400000, excludeCanceledEvents: true, eventTyps: '1851055,24368911851061' },
-            notify: true
+          filters: {
+            type: Object
           },
 
           items: {
