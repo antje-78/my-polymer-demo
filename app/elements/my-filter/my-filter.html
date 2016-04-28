@@ -20,12 +20,12 @@
 
     <div class="layout horizontal layout-start">
       <div class="layout vertical layout-start">
-        <my-date-picker id="dateFromDatepicker" label="Eventdatum von" placeholder="Datum eingeben" date="{{datefrom}}"></my-date-picker>
+        <my-date-picker id="dateFromDatepicker" label="Eventdatum von" placeholder="Datum eingeben" date="{{dateFrom}}"></my-date-picker>
         <my-dropdown-menu id="meeting-points-dropdown" label="Treffpunkt" placeholder="Treffpunkt auswählen" url$="[[url]]/time-sheet/meetingPointList" values="{{meetingpoints}}"></my-dropdown-menu>
       </div>
 
       <div class="layout vertical layout-start">
-        <my-date-picker id="dateToDatepicker" label="Eventdatum bis" placeholder="Datum eingeben" date="{{dateto}}"></my-date-picker>
+        <my-date-picker id="dateToDatepicker" label="Eventdatum bis" placeholder="Datum eingeben" date="{{dateTo}}"></my-date-picker>
         <my-dropdown-menu id="topics-dropdown" label="Thema" placeholder="Thema auswählen" url$="[[url]]/time-sheet/topicList"></my-dropdown-menu>
       </div>
       <div class="layout vertical-reverse layout-start">
@@ -53,16 +53,15 @@
 
         properties: {
           filters: {
-            type: Object,
-            notify: true
+            type: Object
           },
 
-          datefrom: {
+          dateFrom: {
             type: Date,
             observer: 'onDateFromChanged'
           },
 
-          dateto: {
+          dateTo: {
             type: Object,
             notify: true,
             observer: 'onDateToChanged'

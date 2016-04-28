@@ -26,7 +26,8 @@
 
           params: {
             type: Object,
-            value: { dateFrom: 1459468800000, dateTo: 1461542400000, excludeCanceledEvents: true, eventTyps: '1851055,24368911851061' }
+            value: { dateFrom: 1459468800000, dateTo: 1461542400000, excludeCanceledEvents: true, eventTyps: '1851055,24368911851061' },
+            notify: true
           },
 
           items: {
@@ -43,9 +44,6 @@
         },
 
         _refresh: function(e, filters) {
-          for (var name in filters) {
-            this.params[name] = filters[name];
-          }
           this.$.jsonrequest.generateRequest();
         },
 
