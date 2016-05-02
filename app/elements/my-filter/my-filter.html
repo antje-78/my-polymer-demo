@@ -7,13 +7,38 @@
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../../bower_components/paper-toggle-button/paper-toggle-button.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
 
 
 <dom-module id="my-filter">
   <template>
     <style is="custom-style" include="iron-flex iron-flex-alignment iron-flex-reverse">
+      :host {
+        --paper-card: {
+          margin-right: 10px;
+          @apply(--paper-font-body1);
+        };
 
+        --paper-card-header-text: {
+          padding: 0;
+          padding-top: 16px;
+          padding-left: 16px;
+          padding-right: 16px;
+          padding-bottom: 8px;
+        };
+
+        --paper-card-content: {
+          padding: 0;
+          padding-left: 16px;
+          pdding-top: 0;
+          padding-right: 16px;
+          padding-bottom: 8px;
+        }
+      }
       div.layout.vertical {
+        margin-right: 10px;
+      }
+      div.layout.vertical-reverse {
         margin-right: 10px;
       }
     </style>
@@ -21,29 +46,58 @@
     <div class="layout horizontal layout-start">
       <div class="layout vertical layout-start">
         <my-date-picker id="dateFromDatepicker" label="Eventdatum von" placeholder="Datum eingeben" date="{{dateFrom}}"></my-date-picker>
-        <my-dropdown-menu id="meeting-points-dropdown" label="Treffpunkt" placeholder="Treffpunkt auswählen" url$="[[url]]/time-sheet/meetingPointList" values="{{meetingPoints}}"></my-dropdown-menu>
+        <my-dropdown-menu id="meeting-points-dropdown" label="Treffpunkt" placeholder="Treffpunkt auswählen" url$="[[url]]/time-sheet/meetingPointList" values="{{filters.meetingPoints}}"></my-dropdown-menu>
       </div>
 
       <div class="layout vertical layout-start">
         <my-date-picker id="dateToDatepicker" label="Eventdatum bis" placeholder="Datum eingeben" date="{{dateTo}}"></my-date-picker>
-        <my-dropdown-menu id="topics-dropdown" label="Thema" placeholder="Thema auswählen" url$="[[url]]/time-sheet/topicList" values="{{topics}}"></my-dropdown-menu>
+        <my-dropdown-menu id="topics-dropdown" label="Thema" placeholder="Thema auswählen" url$="[[url]]/time-sheet/topicList" values="{{filters.topics}}"></my-dropdown-menu>
       </div>
       <div class="layout vertical-reverse layout-start">
-        <div class="layout horizontal layout-start">
-          <my-dropdown-menu id="event-types-dropdown" label="Eventtyp" placeholder="Eventtyp auswählen" url$="[[url]]/time-sheet/eventTypeList" values="{{eventTyps}}"></my-dropdown-menu>
+          <my-dropdown-menu id="event-types-dropdown" label="Eventtyp" placeholder="Eventtyp auswählen" url$="[[url]]/time-sheet/eventTypeList" values="{{filters.eventTyps}}"></my-dropdown-menu>
+      </div>
+      <div class="layout vertical-reverse layout-start">
+        <my-json-request url$="[[url]]/time-sheet/resourceTypeView" result="{{resourceList}}"></my-json-request>
+      </div>
+      <div class="layout vertical-reverse layout-start">
           <paper-dropdown-menu id="ressources-dropdown" label="Ressourcen" placeholder="Ressourcen auswählen">
-            <div class="layout horizontal layout-start dropdown-content">
-              <paper-menu class="dropdown-content" multi>
-                <paper-item>Ressource 1</paper-item>
-              </paper-menu>
-              <paper-menu class="dropdown-content" multi>
-                <paper-item>Ressource 2</paper-item>
-              </paper-menu>
+            <div class="dropdown-content">
+              <iron-selector multi attr-for-selected="name" selected-items="{{resources}}" selectable="selectable">
+                <template is="dom-repeat" items="[[resourceList]]">
+                  <div class="layout vertical layout-start">
+                  <paper-item name="{{item.resTypeId}}">{{item.resTypeName}}</paper-item>
+                    <div class="layout vertical layout-start">
+                  <template is="dom-repeat" items="[[item.relatedResources]]" as="resource">
+                    <paper-item name="{{resource.resId}}" class="selectable">{{resource.resName}}</paper-item>
+                  </template>
+                    </div>
+                  </div>
+                </template>
+              </iron-selector>
             </div>
           </paper-dropdown-menu>
+      </div>
+      <div class="layout vertical-reverse layout-start">
           <paper-toggle-button name="excludeCanceledEventsToggle" checked="{{filters.excludeCanceledEvents}}">Ausgefallene Events ausblenden</paper-toggle-button>
         </div>
       </div>
+    </div>
+    <div class="layout horizontal layout-start">
+        <template is="dom-repeat" items="{{filters.meetingPoints}}">
+          <paper-card heading="Treffpunkt" class="layout vertical layout-start">
+            <div class="card-content">{{item.outerText}}</div>
+          </paper-card>
+        </template>
+        <template is="dom-repeat" items="{{filters.topics}}">
+          <paper-card heading="Thema" class="layout vertical layout-start">
+            <div class="card-content">{{item.outerText}}</div>
+          </paper-card>
+        </template>
+        <template is="dom-repeat" items="{{filters.eventTyps}}">
+          <paper-card heading="Eventtyp" class="layout vertical layout-start" elevation="1">
+            <div class="card-content">{{item.outerText}}</div>
+          </paper-card>
+        </template>
     </div>
   </template>
   <script>
@@ -54,7 +108,7 @@
         properties: {
           filters: {
             type: Object,
-            value: { dateFrom: null, dateTo: null, excludeCanceledEvents: false, eventTyps: null, meetingPoints: null, topics: null },
+            value: { dateFrom: null, dateTo: null, excludeCanceledEvents: false, eventTyps: [], meetingPoints: [], topics: [] },
             notify: true
           },
 
@@ -84,17 +138,22 @@
             observer: 'onEventTypesSelected'
           },
 
+          resources: {
+            type: Array,
+            observer: 'onResourceSelected'
+          },
+
           url: String
         },
 
       onDateFromChanged: function (newValue, oldValue) {
         console.log(this.localName + ' onDateFromChanged fired!');
-        this.set('filters.dateFrom', newValue.getTime());
+        this.set('filters.dateFrom', newValue); // newValue.getTime()
       },
 
       onDateToChanged: function(newValue, oldValue) {
         console.log(this.localName + ' onDateToChanged fired!');
-        this.set('filters.dateTo', newValue.getTime());
+        this.set('filters.dateTo', newValue); // newValue.getTime()
       },
 
       onMeetingpointsSelected: function (newValue, oldValue) {
@@ -125,6 +184,16 @@
           ids = ids + ( i > 0 ? ',' : '') + newValue[i].name;
         }
         this.set('filters.eventTyps', ids);
+      },
+
+        onResourceSelected: function (newValue, oldValue) {
+        console.log(this.localName + ' onResourceSelected fired!', newValue, oldValue);
+        var ids = '';
+        for (var i = 0; i < newValue.length; i++)
+        {
+          ids = ids + ( i > 0 ? ',' : '') + newValue[i].name;
+        }
+        this.set('filters.resources', ids);
       }
 
     });

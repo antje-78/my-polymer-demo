@@ -2,10 +2,16 @@
 <link rel="import" href="../../bower_components/iron-selector/iron-selector.html">
 <link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-badge/paper-badge.html">
 
 <dom-module id="my-dropdown-menu">
   <template>
     <style is="custom-style" include="shared-styles">
+      :root {
+        --paper-badge: {
+          margin-top: 40px;
+        }
+      }
       paper-item {
         border-bottom: 1px solid var(--divider-color);
       }
@@ -15,20 +21,30 @@
       .iron-selected {
         background-color: var(--divider-color);
       }
+      .dropdown-container{
+        display: inline-block;
+      }
+      .dropdown-container > paper-badge {
+        --paper-badge-margin-left: -25px;
+        --paper-badge-background: var(--divider-color);
+      }
+
     </style>
     <my-json-request url="[[url]]" result="{{result}}" on-response="_response"></my-json-request>
-    <paper-dropdown-menu label="[[label]]" placeholder="[[placeholder]]" always-float-label toggles="true">
-      <div class="dropdown-content">
-      <iron-selector multi attr-for-selected="name" selected-items="{{values}}">
-          <template is="dom-repeat" items="[[result]]">
-            <paper-item name="{{item.id}}">{{item.bezeichnung}}</paper-item>
-          </template>
-      </iron-selector>
-      </div>
-      <!--<paper-menu class="dropdown-content" multi selected-items="{{values}}">-->
-
-      <!--</paper-menu>-->
-    </paper-dropdown-menu>
+    <div class="dropdown-container">
+      <paper-dropdown-menu id="my-dropdown-menu" label="[[label]]" placeholder="[[placeholder]]" always-float-label toggles="true">
+        <div class="dropdown-content">
+        <iron-selector multi selected-items="{{values}}" attr-for-selected="name">
+            <template is="dom-repeat" items="[[result]]">
+              <paper-item name="{{item.id}}">{{item.bezeichnung}}</paper-item>
+            </template>
+        </iron-selector>
+        </div>
+      </paper-dropdown-menu>
+      <template is="dom-if" if="{{showBadge}}">
+        <paper-badge label="{{values.length}}"></paper-badge>
+      </template>
+    </div>
   </template>
   <script>
     HTMLImports.whenReady(function () {
@@ -52,14 +68,25 @@
 
           values: {
             type: Array,
+            value: [],
             notify: true,
             observer: '_valuesChanged'
+          },
+
+          showBadge: {
+            type: Boolean,
+            value: false
           }
         },
 
         listeners: {
-          'response': '_response'
+          'response': '_response',
+          'iron-select': '_onSelect'
         },
+
+//        observers: [
+//          'onAddOrRemoveValue(values.splices)'
+//        ],
 
         created: function () {
           console.log(this.localName + ' was created!');
@@ -87,6 +114,15 @@
 
         _valuesChanged: function (newValue) {
           console.log(this.localName + ' _valuesChanged fired!');
+          this.showBadge = (this.values.length > 0) ? true : false;
+        },
+
+        _onSelect: function (e) {
+          console.log(this.localName + ' _onSelect fired!', e, e.detail);
+//          this.values.remove(this.values.length - 1);
+//          this.values.push({ id: e.detail.item.name , bezeichnung: e.detail.item.outerText });
+//          this.notifyPath('values', this.values, true);
+//          this.set('values', [{ id: e.detail.item.name , bezeichnung: e.detail.item.outerText }]);
         }
       });
     });

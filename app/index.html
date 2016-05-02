@@ -59,6 +59,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <style is="custom-style" include="shared-styles">
 
   </style>
+
 </head>
 <body unresolved>
 <div>
@@ -69,20 +70,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <template is="dom-bind" id="app">
     <paper-material elevation="1" >
       <p>Meine Demo</p>
-      <script>
-        var MyTimeSheetNS= (function(){
-          var MyTimeSheetNS = Object.prototype;
-
-          return {
-            demo: 1
-          }
-        })();
-      </script>
-
       <!-- -->
       <!--columns='[{"name": "firstName", "title": "Vorname"}, {"name": "lastName", "title": "Nachname"}, {"name": "street", "title": "Straße"}, {"name": "city", "title": "Stadt"}, {"name": "state", "title": "Bundesland"}, {"name": "zipcode", "title": "PLZ"}, {"name": "country", "title": "Land"}, {"name": "phone", "title": "Telefonnummer"}, {"name": "email", "title": "E-Mail"}]'-->
-      <my-grid-view id="demo-grid" baseUrl="{{baseUrl}}"
-                    service-url="{{serviceUrl}}">
+      <my-grid-view id="demo-grid" base-url="{{baseUrl}}"
+                    service-url="{{serviceUrl}}" column-provider="{{MyTimeSheetNS}}">
         <!--<timesheet-data items="{{timesheetData}}" class="dataProvider"></timesheet-data>-->
         <!--<my-json-request url$="{{serviceUrl}}/time-sheet/time-sheet-data?dateFrom=1459468800000&dateTo=1461542400000&excludeCanceledEvents=true&eventTyps=1851055,24368911851061" result="{{timesheetData}}" on-response="_response" class="dataProvider"></my-json-request>-->
         <!--<my-grid-data items="{{timesheetData}}" class="dataProvider"></my-grid-data>-->
