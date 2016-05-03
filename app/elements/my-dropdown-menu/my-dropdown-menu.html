@@ -30,19 +30,19 @@
       }
 
     </style>
-    <my-json-request url="[[url]]" result="{{result}}" on-response="_response"></my-json-request>
+    <my-json-request url="[[url]]" items="{{items}}" on-response="_response"></my-json-request>
     <div class="dropdown-container">
       <paper-dropdown-menu id="my-dropdown-menu" label="[[label]]" placeholder="[[placeholder]]" always-float-label toggles="true">
         <div class="dropdown-content">
-        <iron-selector multi selected-items="{{values}}" attr-for-selected="name">
-            <template is="dom-repeat" items="[[result]]">
+        <iron-selector multi selected-items="{{selectedItems}}" ><!--attr-for-selected="name" -->
+            <template is="dom-repeat" items="[[items]]">
               <paper-item name="{{item.id}}">{{item.bezeichnung}}</paper-item>
             </template>
         </iron-selector>
         </div>
       </paper-dropdown-menu>
       <template is="dom-if" if="{{showBadge}}">
-        <paper-badge label="{{values.length}}"></paper-badge>
+        <paper-badge label="{{selectedItems.length}}"></paper-badge>
       </template>
     </div>
   </template>
@@ -64,13 +64,14 @@
 
           url: String,
 
-          result: Array,
-
-          values: {
+          items: {
             type: Array,
-            value: [],
+            observer: '_itemsChanged'
+          },
+
+          selectedItems: {
             notify: true,
-            observer: '_valuesChanged'
+            observer: '_selectedItemsChanged'
           },
 
           showBadge: {
@@ -112,17 +113,17 @@
           this.result = e.detail.response;
         },
 
-        _valuesChanged: function (newValue) {
+        _selectedItemsChanged: function (newValue) {
           console.log(this.localName + ' _valuesChanged fired!');
-          this.showBadge = (this.values.length > 0) ? true : false;
+          this.showBadge = (this.selectedItems.length > 0) ? true : false;
         },
 
         _onSelect: function (e) {
           console.log(this.localName + ' _onSelect fired!', e, e.detail);
-//          this.values.remove(this.values.length - 1);
-//          this.values.push({ id: e.detail.item.name , bezeichnung: e.detail.item.outerText });
-//          this.notifyPath('values', this.values, true);
-//          this.set('values', [{ id: e.detail.item.name , bezeichnung: e.detail.item.outerText }]);
+        },
+
+        _itemsChanged: function (e) {
+          console.log(this.localName + ' _itemsChanged fired!', e, e.detail);
         }
       });
     });

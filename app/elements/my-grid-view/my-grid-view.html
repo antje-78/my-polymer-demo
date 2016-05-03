@@ -11,17 +11,8 @@
     <iron-media-query full query="print" query-matches="{{print}}"></iron-media-query>
     <my-json-request url$="{{serviceUrl}}/time-sheet/time-sheet-columns" result="{{columns}}"></my-json-request>
 
-    <div class="">
-      <!--<content selector=".filterContainer"></content>-->
-      <div class="filterContainer">
-        <p>Filter</p>
-        <my-filter url="{{serviceUrl}}" filters="{{filters}}" date-from="{{dateNow}}" date-to="{{dateNow}}"></my-filter>
-      </div>
-    </div>
-
     <iron-icon id="refreshBtn" icon="refresh" on-tap="_refreshGrid"></iron-icon>
 
-    <my-remote-grid-data url$="[[serviceUrl]]/time-sheet/time-sheet-data" items="{{items}}" filters="{{filters}}"></my-remote-grid-data>
     <p></p>
     <my-grid items="{{items}}" columns="{{columns}}">
     </my-grid>
@@ -36,6 +27,10 @@
         baseUrl: String,
 
         serviceUrl: String,
+
+        filters: Object,
+
+        gridData: Array,
 
 //        filters: {
 //          type: Object,

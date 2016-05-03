@@ -28,7 +28,7 @@
             type: Object
           },
 
-          items: {
+          gridData: {
             notify: true
           }
         },
@@ -47,7 +47,7 @@
 
         _response: function(e) {
           console.log(this.localName + ' response fired!' + e.detail.response);
-          this.items = e.detail.response;
+          this.gridData = e.detail.response;
         }
       })
     });

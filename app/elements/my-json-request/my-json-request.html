@@ -8,7 +8,6 @@
                handleAs="json"
                verbose="true"
                on-response="_response" on-request="_request"></iron-ajax>
-    <!--<my-list items="[[result]]"></my-list>-->
   </template>
   <script>
     HTMLImports.whenReady(function(){
@@ -21,7 +20,7 @@
           parameters: {
             type: Object
           },
-          result: {
+          items: {
             notify: true
           }
         },
@@ -45,7 +44,7 @@
 
         _response: function(e) {
           console.log(this.localName + ' response fired!' + e.detail.response);
-          this.result = e.detail.response;
+          this.items = e.detail.response;
         }
       });
     });
