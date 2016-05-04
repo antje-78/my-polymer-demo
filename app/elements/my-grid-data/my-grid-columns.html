@@ -1,13 +1,20 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-localstorage/iron-localstorage.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
 
 <dom-module id="my-grid-columns">
   <template>
-    <iron-ajax id="jsonrequest" url="[[url]]"
-               contentType="text/json"
-               deboundDuration="30000"
-               handleAs="json"
-               verbose="true"
-               on-response="_response" on-request="_request"></iron-ajax>
+    <iron-localstorage name="my-grid-columns"
+                       on-iron-localstorage-load="_backupLoaded"
+                       value="{{backupItems}}">
+    </iron-localstorage>
+
+    <!--<iron-ajax id="jsonrequest" url="[[url]]"-->
+               <!--contentType="text/json"-->
+               <!--deboundDuration="30000"-->
+               <!--handleAs="json"-->
+               <!--verbose="true"-->
+               <!--on-response="_response" on-request="_request" ></iron-ajax>-->
   </template>
   <script>
     HTMLImports.whenReady(function () {
@@ -24,12 +31,23 @@
           url: String,
 
           gridColumns: {
+            type: Array,
             notify: true
           }
         },
 
         attached: function() {
-          this.$.jsonrequest.generateRequest();
+          //this.$.jsonrequest.generateRequest();
+          //this.fire('iron-localstorage-load');
+        },
+
+        _backupLoaded: function () {
+          if (this.backupItems == undefined || typeof this.backupItems != Object)
+            this.$.jsonrequest.generateRequest();
+          else {
+            this.gridColumns = this.backupItems.slice();
+            this.fire('grid-columns-changed', this.gridColumns);
+          }
         },
 
         _request: function () {
@@ -43,7 +61,72 @@
         _response: function(e) {
           console.log(this.localName + ' response fired!' + e.detail.response);
           this.gridColumns = e.detail.response;
+          this._applyRenderer();
+          this.fire('grid-columns-changed', this.gridColumns);
+        },
+
+        _applyRenderer_: function() {
+          for(var i = 0; i < this.gridColumns.length; i++) {
+              this.gridColumns[i].renderer = function(column, row) { return '<i>' +  (row[column.propertyName] == null ? '' : row[column.propertyName] ) + '</i>'; }
+              if (this.gridColumns[i].propertyName == "eigenschaften") {
+                this.gridColumns[i].renderer = function(column, row) { return '<i>' +  (row[column.propertyName] == null ? '' : row[column.propertyName].replace(/\n/g, '<br/>') ) + '</i>'; }
+              }
+
+              if (this.gridColumns[i].propertyName != undefined && this.gridColumns[i].propertyName != null) {
+              var resMatchResult = this.gridColumns[i].propertyName.match(/^(ressourcetype)-(\d*)/);
+              if (resMatchResult != null && resMatchResult.length > 1) {
+                var resTypId = parseInt(resMatchResult[2]);
+                var rendererClosure = (function(resTypId) {
+                   return { renderer:  function(column, row) {
+                      //console.log('Grid-Cell-Renderer ', resTypId, column, row, row.ressourcesByResType[resTypId]);
+                      var resByResTyp = row.ressourcesByResType[resTypId];
+                      if ( resByResTyp == undefined )
+                        return '-';
+                      else {
+                        var resText = '';
+                        for(id in resByResTyp)
+                          resText = resText + '<p>' + resByResTyp[id].bezeichnung + '</p>';
+                        return resText;
+                      }
+                   }}
+                   })(resTypId);
+                this.gridColumns[i].renderer = rendererClosure.renderer;
+              }
+            }
+          }
+        },
+
+        _applyRenderer: function() {
+          for(var i = 0; i < this.gridColumns.length; i++) {
+              this.gridColumns[i].renderer = function(cell) { cell.element.innerHTML = '<i>' +  (cell.data == null ? '' : cell.data ) + '</i>'; }
+              if (this.gridColumns[i].propertyName == "eigenschaften") {
+                this.gridColumns[i].renderer = function(cell) { cell.element.innerHTML = '<i>' +  (cell.data == null ? '' : cell.data.replace(/\n/g, '<br/>') ) + '</i>'; }
+              }
+
+              if (this.gridColumns[i].propertyName != undefined && this.gridColumns[i].propertyName != null) {
+              var resMatchResult = this.gridColumns[i].propertyName.match(/^(ressourcetype)-(\d*)/);
+              if (resMatchResult != null && resMatchResult.length > 1) {
+                var resTypId = parseInt(resMatchResult[2]);
+                var rendererClosure = (function(resTypId) {
+                   return { renderer:  function(cell) {
+                      //console.log('Grid-Cell-Renderer ', resTypId, cell, cell.row, cell.row.data.ressourcesByResType[resTypId]);
+                      var resByResTyp = cell.row.data.ressourcesByResType[resTypId];
+                      if ( resByResTyp == undefined )
+                        cell.element.innerHTML = '-';
+                      else {
+                        var resText = '';
+                        for(id in resByResTyp)
+                          resText = resText + '<p>' + resByResTyp[id].bezeichnung + '</p>';
+                        cell.element.innerHTML = resText;
+                      }
+                   }}
+                   })(resTypId);
+                this.gridColumns[i].renderer = rendererClosure.renderer;
+              }
+            }
+          }
         }
+
       })
     });
   </script>

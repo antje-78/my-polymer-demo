@@ -111,7 +111,7 @@
         <div class="dropdown-container">
           <paper-dropdown-menu id="meetingPointsDropdown" label="Treffpunk" placeholder="Treffpunk eingeben" always-float-label toggles="true">
             <div class="dropdown-content">
-              <iron-selector id="meetingPointsSelector" multi selected-values="{{selectedMeetingPoints}}">
+              <iron-selector id="meetingPointsSelector" multi selected-values="{{selectedMeetingPoints}}" on-tap="onMeetingpointsSelected">
                   <template is="dom-repeat" items="[[meetingPoints]]">
                     <paper-item name="{{item.id}}">{{item.bezeichnung}}</paper-item>
                   </template>
@@ -177,9 +177,7 @@
 
           selectedMeetingPoints: {
             type: Array,
-            value: [],
-            notify: true,
-            observer: 'onMeetingpointsSelected'
+            value: []
           },
 
           dateFrom: {
@@ -216,18 +214,14 @@
           url: String
         },
 
-      observers: [
-         'onMeetingpointsSelected(meetingPointsSelector.selectedValues)'
-      ],
-
       onDateFromChanged: function (newValue, oldValue) {
         console.log(this.localName + ' onDateFromChanged fired!');
-        this.set('filters.dateFrom', newValue); // newValue.getTime()
+        this.set('filters.dateFrom', newValue.getTime());
       },
 
       onDateToChanged: function(newValue, oldValue) {
         console.log(this.localName + ' onDateToChanged fired!');
-        this.set('filters.dateTo', newValue); // newValue.getTime()
+        this.set('filters.dateTo', newValue.getTime());
       },
 
       onMeetingpointsSelected: function (newValue, oldValue) {

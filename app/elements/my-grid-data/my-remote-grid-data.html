@@ -49,6 +49,7 @@
         _response: function(e) {
           console.log(this.localName + ' response fired!' + e.detail.response);
           this.gridData = e.detail.response;
+          this.fire('grid-data-changed', this.gridData);
         }
       })
     });

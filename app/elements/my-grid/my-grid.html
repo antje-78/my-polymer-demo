@@ -27,6 +27,12 @@
         padding-right: 0;
       }
 
+/*
+      vaadin-grid /deep/.vaadin-grid-body.vaadin-grid tr.vaadin-grid {
+        height: inherit;
+        min-height: var(--vaadin-grid-row-height, 48px);
+      }
+*/
       vaadin-grid[print-layout] /deep/.vaadin-grid-tablewrapper.vaadin-grid {
         overflow: visible;
         height: 100% !important;
@@ -82,11 +88,56 @@
         width: 16px;
         z-index: 9;
       }
+/*
+      #grid-container {
+        overflow: scroll;
+        @apply(--layout-relative);
+      }
+      table {
+        border-collapse: collapse;
+        height: 100vh;
+        @apply(--paper-font-body1);
+        @apply(--layout-relative);
+      }
+
+      table tr th {
+        padding: 8px;
+        color: var(--primary-font-color);
+        border-bottom: 2px solid var(--divider-color);
+      }
+
+      table tr td {
+        padding: 8px;
+        color: var(--primary-font-color);
+      }
+      */
     </style>
     <iron-media-query full query="print" query-matches="{{print}}"></iron-media-query>
-    <div id="grid-container">
+    <div id="grid-container" class="flex">
       <vaadin-grid id="grid" items="{{gridData}}" selection-mode="disabled" print-layout$="{{print}}">
-
+        <!--<table class="flex">-->
+          <!--<colgroup>-->
+            <!--<template is="dom-repeat" items="{{gridColumns}}" as="column">-->
+              <!--<col name="{{column.name}}" flex="1">-->
+            <!--</template>-->
+          <!--</colgroup>-->
+          <!--<thead>-->
+            <!--<tr>-->
+              <!--<template is="dom-repeat" items="{{gridColumns}}" as="column">-->
+                <!--<th>{{column.name}}</th>-->
+              <!--</template>-->
+            <!--</tr>-->
+          <!--</thead>-->
+          <!--<tbody>-->
+            <!--<template is="dom-repeat" items="{{gridData}}" as="row">-->
+              <!--<tr>-->
+                <!--<template is="dom-repeat" items="{{gridColumns}}" as="column">-->
+                  <!--<td>{{_computeCellData(column, row)}}</td>-->
+                <!--</template>-->
+              <!--</tr>-->
+            <!--</template>-->
+          <!--</tbody>-->
+        <!--</table>-->
       </vaadin-grid>
     </div>
   </template>
@@ -105,7 +156,7 @@
         listeners: {
           'refresh': '_refreshGrid',
           'grid-columns-changed': '_columnsChanged',
-          'items-changed': '_itemsChanged'
+          'grid-data-changed': '_itemsChanged'
         },
 
         created: function (e) {
@@ -124,14 +175,17 @@
 
         },
 
+        _columnsChanged_: function (e) {
+          console.log(this.localName + ' columnsChanged fired!');
+        },
+
         _columnsChanged: function (e) {
           console.log(this.localName + ' columnsChanged fired!');
           var vaadin_grid = this.querySelector('vaadin-grid');
           for(var i = 0; i < this.gridColumns.length; i++)
           {
-            vaadin_grid.columns[i] = { "name": this.gridColumns[i].propertyName, "hidable": this.gridColumns[i].hidable, "hidden": this.gridColumns[i].hidden, "sortable": this.gridColumns[i].sortable, renderer: function(cell) {
-              cell.element.innerHTML = '<i>' +  cell.data + '</i>';
-            } };
+            var renderFunction = this.gridColumns[i].renderer == undefined ? function(cell) { cell.element.innerHTML = (cell.data == null ? '' : cell.data ); } : this.gridColumns[i].renderer;
+            vaadin_grid.columns[i] = { "name": this.gridColumns[i].propertyName, "hidable": this.gridColumns[i].hidable, "hidden": this.gridColumns[i].hidden, "sortable": this.gridColumns[i].sortable, renderer: renderFunction };
           }
 
           vaadin_grid.then(function () {
@@ -143,11 +197,12 @@
               console.log('Header-Cell 0,'+ i + ': ' , vaadin_grid.header.getCell(0, i));
               vaadin_grid.header.getCell(0, i).content = grid.gridColumns[i].name;
             }
-            vaadin_grid.frozenColumns = 2;
+            //vaadin_grid.frozenColumns = 2;
           });
         },
 
-        _itemsChanged: function () {
+        _itemsChanged: function (e) {
+          var grid = document.querySelector("my-grid");
           grid.toggleClass('grid-loading-data', false, document.querySelector("#grid-container"));
         },
 
@@ -176,6 +231,9 @@
 //                          callback(json.result, json.size);
 //                        });
 //                      };
+        },
+        _computeCellData: function(column, row) {
+           return column.renderer(column, row);
         }
       });
 

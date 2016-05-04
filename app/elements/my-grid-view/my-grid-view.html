@@ -7,23 +7,24 @@
   <template>
     <style is="custom-style" include="shared-style">
     </style>
-
+    <content select="my-grid-columns"></content>
     <content select="my-remote-grid-data"></content>
+    <content select="my-grid-data"></content>
     <content select="my-filter" ></content>
     <!--<my-json-request url$="{{serviceUrl}}/time-sheet/time-sheet-columns" result="{{gridColumns}}"></my-json-request>-->
-    <content select="my-grid-columns"></content>
     <content select="#grid-column-provider"></content>
+
     <!--url$="{{serviceUrl}}/time-sheet/time-sheet-columns"-->
     <!--url="../my-grid-data/demo-grid-columns.json"-->
-    <iron-ajax id="grid-column-provider"
-               url$="{{serviceUrl}}/time-sheet/time-sheet-columns"
-               contentType="text/json"
-               deboundDuration="30000"
-               handleAs="json"
-               verbose="true"
-               last-response="{{gridColumns}}"
-               on-response="_columnsResponse"
-               auto></iron-ajax>
+    <!--<iron-ajax id="grid-column-provider"-->
+               <!--url$="{{serviceUrl}}/time-sheet/time-sheet-columns"-->
+               <!--contentType="text/json"-->
+               <!--deboundDuration="30000"-->
+               <!--handleAs="json"-->
+               <!--verbose="true"-->
+               <!--last-response="{{gridColumns}}"-->
+               <!--on-response="_columnsResponse"-->
+               <!--auto></iron-ajax>-->
 
     <iron-icon id="refreshBtn" icon="refresh" on-tap="_refreshGrid"></iron-icon>
 
@@ -47,10 +48,7 @@
 
         gridData: Array,
 
-        gridColumns: {
-          type: Array,
-          notify: true
-        },
+        gridColumns: Array,
 
         iconRotate: {
           type: Number,
@@ -60,19 +58,20 @@
 
       listeners: {
         'start-rotate-refresh-icon': '_startRotateRefreshIcon',
-        'filters-changed': '_filtersChanged'
-//        'grid-columns-changed': '_columnsResponse'
+        'filters-changed': '_filtersChanged',
+        'grid-columns-changed': '_columnsResponse',
+        'grid-data-changed': '_gridDataResponse'
       },
 
       _refreshGrid: function () {
         this.fire('refresh', this.querySelector('my-filter').get('filters'), { node: this.querySelector("my-remote-grid-data"), bubbles: true, cancelable: false });
-        this.fire('start-rotate-refresh-icon', {}, { bubbles: true, cancelable: true});
+        // this.fire('start-rotate-refresh-icon', {}, { bubbles: true, cancelable: true});
       },
 
       _startRotateRefreshIcon: function () {
-        this.iconRotate = this.iconRotate + 15;
-        this.transform('rotateZ(' + this.iconRotate  + 'deg)', this.$.refreshBtn);
-//        this.fire('start-rotate-refresh-icon', {}, { bubbles: true, cancelable: true});
+       // this.iconRotate = this.iconRotate + 15;
+       // this.transform('rotateZ(' + this.iconRotate  + 'deg)', this.$.refreshBtn);
+       // this.fire('start-rotate-refresh-icon', {}, { bubbles: true, cancelable: true});
       },
 
       _filtersChanged: function () {
@@ -89,7 +88,14 @@
 
       _columnsResponse: function (e) {
         console.log(this.localName + " _columnsResponse !" , e);
-        this.fire('grid-columns-changed', this.gridColumns, { node: this.$.grid } );
+        this.gridColumns = e.detail;
+        this.fire('grid-columns-changed', this.gridColumns, { node: this.$.grid, bubbles: false, cancelable: true } );
+      },
+
+      _gridDataResponse: function(e) {
+        console.log(this.localName + " _gridDataResponse !" , e);
+        this.gridData = e.detail;
+        this.fire('grid-data-changed', this.gridData, { node: this.$.grid, bubbles: false, cancelable: true } );
       }
     })
   </script>
