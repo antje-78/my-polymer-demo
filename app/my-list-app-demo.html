@@ -71,12 +71,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <paper-material elevation="1" >
       <p>Meine Demo</p>
 
-      <my-remote-grid-data url$="[[serviceUrl]]/time-sheet/time-sheet-data" grid-data="{{gridData}}" filters="{{filters}}"></my-remote-grid-data>
 
-      <my-filter url="{{serviceUrl}}" filters="{{filters}}"></my-filter>
 
       <my-grid-view base-url="{{baseUrl}}" service-url="{{serviceUrl}}" filters="{{filters}}" grid-data="{{gridData}}">
+        <my-remote-grid-data url$="[[serviceUrl]]/time-sheet/time-sheet-data" grid-data="{{gridData}}" filters="{{filters}}"></my-remote-grid-data>
+        <!--<my-remote-grid-data url="elements/my-grid-data/demo-grid-data.json" grid-data="{{gridData}}" filters="{{filters}}"></my-remote-grid-data>-->
 
+        <my-filter url="{{serviceUrl}}" filters="{{filters}}"></my-filter>
+
+        <!--<my-grid-columns url="elements/my-grid-data/demo-grid-columns.json" grid-columns="{{gridColumns}}"></my-grid-columns>-->
 
       </my-grid-view>
 

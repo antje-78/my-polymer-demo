@@ -1,0 +1,10 @@
+[{"propertyName":"firstName","name":"Vorname","groupName":"","hidable":true,"hidden":false,"sortable":true},
+  {"propertyName":"lastName","name":"Nachname","groupName":"","hidable":true,"hidden":false,"sortable":true},
+  {"propertyName":"street","name":"Straße","groupName":"","hidable":true,"hidden":false,"sortable":true},
+  {"propertyName":"city","name":"Wohnort","groupName":"","hidable":true,"hidden":false,"sortable":true},
+  {"propertyName":"state","name":"Bundesland","groupName":"","hidable":true,"hidden":false,"sortable":true},
+  {"propertyName":"zipcode","name":"PLZ","groupName":"","hidable":true,"hidden":false,"sortable":true},
+  {"propertyName":"country","name":"Wohnort","groupName":"","hidable":true,"hidden":false,"sortable":true},
+  {"propertyName":"phone","name":"Telefon","groupName":"","hidable":true,"hidden":false,"sortable":true},
+  {"propertyName":"email","name":"E-Mail","groupName":"","hidable":true,"hidden":false,"sortable":true}
+]

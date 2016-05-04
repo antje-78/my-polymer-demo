@@ -5,16 +5,31 @@
 
 <dom-module id="my-grid-view">
   <template>
-    <script src="../../bower_components/jquery-2.2.3.min/index.js"></script>
     <style is="custom-style" include="shared-style">
     </style>
-    <iron-media-query full query="print" query-matches="{{print}}"></iron-media-query>
-    <my-json-request url$="{{serviceUrl}}/time-sheet/time-sheet-columns" result="{{columns}}"></my-json-request>
+
+    <content select="my-remote-grid-data"></content>
+    <content select="my-filter" ></content>
+    <!--<my-json-request url$="{{serviceUrl}}/time-sheet/time-sheet-columns" result="{{gridColumns}}"></my-json-request>-->
+    <content select="my-grid-columns"></content>
+    <content select="#grid-column-provider"></content>
+    <!--url$="{{serviceUrl}}/time-sheet/time-sheet-columns"-->
+    <!--url="../my-grid-data/demo-grid-columns.json"-->
+    <iron-ajax id="grid-column-provider"
+               url$="{{serviceUrl}}/time-sheet/time-sheet-columns"
+               contentType="text/json"
+               deboundDuration="30000"
+               handleAs="json"
+               verbose="true"
+               last-response="{{gridColumns}}"
+               on-response="_columnsResponse"
+               auto></iron-ajax>
 
     <iron-icon id="refreshBtn" icon="refresh" on-tap="_refreshGrid"></iron-icon>
 
     <p></p>
-    <my-grid items="{{items}}" columns="{{columns}}">
+    <my-grid id="grid" grid-data="{{gridData}}" grid-columns="{{gridColumns}}">
+
     </my-grid>
   </template>
   <script>
@@ -32,12 +47,7 @@
 
         gridData: Array,
 
-//        filters: {
-//          type: Object,
-//          notify: true
-//        },
-
-        columns: {
+        gridColumns: {
           type: Array,
           notify: true
         },
@@ -45,27 +55,17 @@
         iconRotate: {
           type: Number,
           value: 0
-        },
-
-//        columns: {
-//          type: Array,
-//          value: [{name: 'firstName', title: 'Vorname'}, {name: 'lastName', title: 'Nachname'}, {name: 'street', title: 'Straße'}, {name: 'city', title: 'Stadt'}, {name: 'state', title: 'Bundesland'}, {name: 'zipcode', title: 'PLZ'}, {name: 'country', title: 'Land'}, {name: 'phone', title: 'Telefonnummer'}, {name: 'email', title: 'E-Mail'}],
-//          notify: true
-//        }
-        columnProvider: {
-          type: Object,
-          notify: true
         }
       },
 
       listeners: {
         'start-rotate-refresh-icon': '_startRotateRefreshIcon',
         'filters-changed': '_filtersChanged'
+//        'grid-columns-changed': '_columnsResponse'
       },
 
       _refreshGrid: function () {
         this.fire('refresh', this.querySelector('my-filter').get('filters'), { node: this.querySelector("my-remote-grid-data"), bubbles: true, cancelable: false });
-
         this.fire('start-rotate-refresh-icon', {}, { bubbles: true, cancelable: true});
       },
 
@@ -85,6 +85,11 @@
 
       columnProviderChanged: function () {
         console.log(this.localName + " columnProviderChanged !" , this.columnProvider);
+      },
+
+      _columnsResponse: function (e) {
+        console.log(this.localName + " _columnsResponse !" , e);
+        this.fire('grid-columns-changed', this.gridColumns, { node: this.$.grid } );
       }
     })
   </script>

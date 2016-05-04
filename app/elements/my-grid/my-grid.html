@@ -27,6 +27,11 @@
         padding-right: 0;
       }
 
+      vaadin-grid[print-layout] /deep/.vaadin-grid-tablewrapper.vaadin-grid {
+        overflow: visible;
+        height: 100% !important;
+      }
+
       vaadin-grid table:before {
         -webkit-animation: vaadin-grid-spin-360 400ms linear infinite;
         animation: vaadin-grid-spin-360 400ms linear infinite;
@@ -78,28 +83,28 @@
         z-index: 9;
       }
     </style>
+    <iron-media-query full query="print" query-matches="{{print}}"></iron-media-query>
     <div id="grid-container">
-      <vaadin-grid id="grid" items="{{items}}" selection-mode="disabled">
+      <vaadin-grid id="grid" items="{{gridData}}" selection-mode="disabled" frozen-columns="2" print-layout$="{{print}}">
+
       </vaadin-grid>
     </div>
   </template>
   <script>
-    (function() {
-      var MyGrid = Polymer({
+
+      Polymer({
         is: 'my-grid',
 
         properties: {
-          items: Object,
+          gridData: Array,
 
-          columns: {
-            type: Array,
-            notify: true
-          }
-        },
+          gridColumns: Array
+
+    },
 
         listeners: {
           'refresh': '_refreshGrid',
-          'columns-changed': '_columnsChanged',
+          'grid-columns-changed': '_columnsChanged',
           'items-changed': '_itemsChanged'
         },
 
@@ -119,22 +124,24 @@
 
         },
 
-        _columnsChanged: function () {
+        _columnsChanged: function (e) {
           console.log(this.localName + ' columnsChanged fired!');
           var vaadin_grid = this.querySelector('vaadin-grid');
-          for(var i = 0; i < this.columns.length; i++)
+          for(var i = 0; i < this.gridColumns.length; i++)
           {
-            vaadin_grid.columns[i] = { "name": this.columns[i].propertyName, "hidable": this.columns[i].hidable, "hidden": this.columns[i].hidden, "sortable": this.columns[i].sortable };
+            vaadin_grid.columns[i] = { "name": this.gridColumns[i].propertyName, "hidable": this.gridColumns[i].hidable, "hidden": this.gridColumns[i].hidden, "sortable": this.gridColumns[i].sortable, renderer: function(cell) {
+              cell.element.innerHTML = '<i>' +  cell.data + '</i>';
+            } };
           }
 
           vaadin_grid.then(function () {
             var vaadin_grid = document.querySelector("vaadin-grid");
             var grid = document.querySelector("my-grid");
-            if (vaadin_grid == undefined || grid == undefined || grid == null || grid.columns == null)
+            if (vaadin_grid == undefined || grid == undefined || grid == null || grid.gridColumns == null)
               return;
-            for(var i = 0; i < grid.columns.length; i++) {
+            for(var i = 0; i < grid.gridColumns.length; i++) {
               console.log('Header-Cell 0,'+ i + ': ' , vaadin_grid.header.getCell(0, i));
-              vaadin_grid.header.getCell(0, i).content = grid.columns[i].name;
+              vaadin_grid.header.getCell(0, i).content = grid.gridColumns[i].name;
             }
           });
         },
@@ -149,17 +156,17 @@
           if (grid == undefined)
             return;
           this.toggleClass('grid-loading-data', true, document.querySelector("#grid-container"));
-          grid.items = [{}];
+          grid.gridData = [{}];
 //          this.fire('loadData-' + this.getAttribute('id'), { 'grid' : grid });
         },
 
         _dataLoaded: function() {
-          grid.items = this.items == undefined ? [] : this.items;
+          grid.gridData = this.gridData == undefined ? [] : this.gridData;
         },
 
         updateItems: function () {
           var grid = document.querySelector("vaadin-grid");
-          grid.items = [{}];
+          grid.gridData = [{}];
 
 //          var loadingIndicatorRow = document.getElementById('loadingIndicatorRow');
 //          loadingIndicatorRow.setAttribute("class", "show");
@@ -170,6 +177,6 @@
 //                      };
         }
       });
-    })();
+
   </script>
 </dom-module>

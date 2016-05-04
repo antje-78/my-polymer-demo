@@ -1,0 +1,12 @@
+[
+  {"firstName":"Gabriel","lastName":"Cook","street":"6261 Hidden Lake Manor","city":"Foot of Ten","state":"Alabama","zipcode":"36262-6582","country":"USA","phone":"(251) 555-1099","email":"gabriel.cook@company.com"},
+  {"firstName":"Genesis","lastName":"Stewart","street":"8616 Heather Glade","city":"Corkscrew","state":"Mississippi","zipcode":"38785-5317","country":"USA","phone":"(601) 555-9985","email":"genesis.stewart@company.com"},
+  {"firstName":"Ayden","lastName":"Rivera","street":"9236 Quiet Round","city":"Vopolo Havoka","state":"Missouri","zipcode":"64519-3548","country":"USA","phone":"(417) 555-8373","email":"ayden.rivera@company.com"},
+  {"firstName":"Hunter","lastName":"Sullivan","street":"4662 Stony View","city":"Oblong","state":"Illinois","zipcode":"62468-0592","country":"USA","phone":"(618) 555-6510","email":"hunter.sullivan@company.com"},
+  {"firstName":"Jordan","lastName":"Cooper","street":"961 Golden Crescent","city":"Quinapoxet","state":"Tennessee","zipcode":"37314-3596","country":"USA","phone":"(865) 555-9904","email":"jordan.cooper@company.com"},
+  {"firstName":"Ariana","lastName":"Parker","street":"2590 Little Sky Square","city":"Defeated","state":"New Jersey","zipcode":"07091-9079","country":"USA","phone":"(551) 555-6739","email":"ariana.parker@company.com"},
+  {"firstName":"Lillian","lastName":"Flores","street":"8695 High Horse Carrefour","city":"Nashville","state":"District of Columbia","zipcode":"20012-7697","country":"USA","phone":"(202) 555-5209","email":"lillian.flores@company.com"},
+  {"firstName":"Levi","lastName":"Bell","street":"5868 Cinder Centre","city":"Apponagansett","state":"North Dakota","zipcode":"58777-1298","country":"USA","phone":"(701) 555-0519","email":"levi.bell@company.com"},
+  {"firstName":"Leah","lastName":"Morris","street":"3977 Heather Way","city":"Nankipooh","state":"Minnesota","zipcode":"56063-2417","country":"USA","phone":"(320) 555-1707","email":"leah.morris@company.com"},
+  {"firstName":"Ian","lastName":"Perry","street":"2139 Dewy Autumn Orchard","city":"Wax","state":"Florida","zipcode":"34109-9657","country":"USA","phone":"(863) 555-4371","email":"ian.perry@company.com"}
+]

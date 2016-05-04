@@ -1,20 +1,18 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
-<dom-module id="my-remote-grid-data">
+<dom-module id="my-grid-columns">
   <template>
     <iron-ajax id="jsonrequest" url="[[url]]"
-               params="{{filters}}"
                contentType="text/json"
                deboundDuration="30000"
                handleAs="json"
                verbose="true"
                on-response="_response" on-request="_request"></iron-ajax>
-    <!---->
   </template>
   <script>
     HTMLImports.whenReady(function () {
       Polymer({
-        is: 'my-remote-grid-data',
+        is: 'my-grid-columns',
 
         listeners: {
           'request':  '_request',
@@ -25,17 +23,13 @@
         properties: {
           url: String,
 
-          filters: {
-            type: Object
-          },
-
-          gridData: {
+          gridColumns: {
             notify: true
           }
         },
 
         attached: function() {
-
+          this.$.jsonrequest.generateRequest();
         },
 
         _request: function () {
@@ -43,12 +37,12 @@
         },
 
         _refresh: function(e, filters) {
-          this.$.jsonrequest.generateRequest();
+
         },
 
         _response: function(e) {
           console.log(this.localName + ' response fired!' + e.detail.response);
-          this.gridData = e.detail.response;
+          this.gridColumns = e.detail.response;
         }
       })
     });
