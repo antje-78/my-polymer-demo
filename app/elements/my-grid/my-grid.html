@@ -85,7 +85,7 @@
     </style>
     <iron-media-query full query="print" query-matches="{{print}}"></iron-media-query>
     <div id="grid-container">
-      <vaadin-grid id="grid" items="{{gridData}}" selection-mode="disabled" frozen-columns="2" print-layout$="{{print}}">
+      <vaadin-grid id="grid" items="{{gridData}}" selection-mode="disabled" print-layout$="{{print}}">
 
       </vaadin-grid>
     </div>
@@ -143,6 +143,7 @@
               console.log('Header-Cell 0,'+ i + ': ' , vaadin_grid.header.getCell(0, i));
               vaadin_grid.header.getCell(0, i).content = grid.gridColumns[i].name;
             }
+            vaadin_grid.frozenColumns = 2;
           });
         },
 
