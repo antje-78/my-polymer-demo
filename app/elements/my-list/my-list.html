@@ -10,6 +10,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/paper-styles/typography.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
 
 <dom-module id="my-list">
   <template>
@@ -21,12 +23,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       span {
         @apply(--paper-font-body1);
       }
+
+      paper-item.hover {
+        border: 1px solid var(--accent-color);
+      }
     </style>
 
     <ul>
+      <paper-listbox>
       <template is="dom-repeat" items="{{items}}">
-        <li><span>{{item}}</span></li>
+          <paper-item on-track="_track">{{item}}</paper-item>
       </template>
+      </paper-listbox>
     </ul>
   </template>
 
@@ -41,6 +49,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           items: {
             type: Array,
             notify: true
+          },
+
+          hoveredItems: {
+            type: Array,
+            value: []
           }
         },
 
@@ -53,6 +66,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             'Routing with Page.js',
             'Offline support with the Platinum Service Worker Elements'
           ];
+        },
+
+        _track: function(e, detail) {
+           var trackStatus = detail;
+           console.log(this.localName + '_track fired!', e, detail, trackStatus );
+           var hover = detail.hover();
+           if( hover != undefined && hover != null) {
+            this.hoveredItems[this.hoveredItems.length] = hover;
+            for(var i = 0; i < this.hoveredItems.length; i++) {
+             this.hoveredItems[i].toggleClass('hover', false, this.hoveredItems[i]);
+            }
+            console.log(this.localName + '_track fired!', hover);
+            hover.toggleClass('hover', true, hover);
+           }
         }
       });
     })();
