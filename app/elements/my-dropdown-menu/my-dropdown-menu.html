@@ -32,9 +32,9 @@
     </style>
     <my-json-request url="[[url]]" items="{{items}}" on-response="_response"></my-json-request>
     <div class="dropdown-container">
-      <paper-dropdown-menu id="my-dropdown-menu" label="[[label]]" placeholder="[[placeholder]]" always-float-label toggles="true">
+      <paper-dropdown-menu id="dropdown" label="[[label]]" placeholder="[[placeholder]]" always-float-label toggles="true" on-iron-select="_onSelect" on-iron-deselect="_onDeselect">
         <div class="dropdown-content">
-        <iron-selector multi selected-items="{{selectedItems}}" ><!--attr-for-selected="name" -->
+        <iron-selector id="selector" multi selected-values="{{selectedValues}}" on-selected-values-changed="_selectedValuesChanged" >
             <template is="dom-repeat" items="[[items]]">
               <paper-item name="{{item.id}}">{{item.bezeichnung}}</paper-item>
             </template>
@@ -42,7 +42,7 @@
         </div>
       </paper-dropdown-menu>
       <template is="dom-if" if="{{showBadge}}">
-        <paper-badge label="{{selectedItems.length}}"></paper-badge>
+        <paper-badge label="{{selectedValues.length}}"></paper-badge>
       </template>
     </div>
   </template>
@@ -65,47 +65,39 @@
           url: String,
 
           items: {
-            type: Array,
-            observer: '_itemsChanged'
+            type: Array
           },
 
-          selectedItems: {
-            notify: true,
-            observer: '_selectedItemsChanged'
+          selectedValues: {
+            notify: true
           },
 
           showBadge: {
             type: Boolean,
             value: false
+          },
+
+          selectedItems: {
+             type: Array,
+             notify: true
           }
         },
 
         listeners: {
           'response': '_response',
-          'iron-select': '_onSelect'
+          'remove-selected-item': '_removeSelectedItem'
         },
-
-//        observers: [
-//          'onAddOrRemoveValue(values.splices)'
-//        ],
 
         created: function () {
           console.log(this.localName + ' was created!');
-//          if (typeof this.url != undefined)
-//            console.log('url: ' + this.url);
         },
 
         ready: function () {
           console.log(this.localName + ' was ready!');
-//          if ( typeof this.url != undefined)
-//            console.log('url: ' + this.url);
         },
 
         attached: function () {
-          console.log(this.localName + ' was attached!');
-          console.log(this.result);
-//          if ( typeof this.url != undefined)
-//            console.log('url: ' + this.url);
+          console.log(this.localName + ' was attached!', this.result);
         },
 
         _response: function (e) {
@@ -113,17 +105,43 @@
           this.result = e.detail.response;
         },
 
-        _selectedItemsChanged: function (newValue) {
-          console.log(this.localName + ' _valuesChanged fired!');
-          this.showBadge = (this.selectedItems.length > 0) ? true : false;
+        _selectedValuesChanged: function (e, detail) {
+          console.log(this.localName + ' _selectedValuesChanged fired!');
+          this.showBadge = (this.$.selector.selectedValues.length > 0) ? true : false;
+
+          var selectedItems = [];
+          for( var i = 0; i < this.$.selector.selectedValues.length; i++)
+            selectedItems[i] = this.items[this.$.selector.selectedValues[i]];
+          this.selectedItems = selectedItems;
+          this.fire('selected-items-changed', this.selectedItems);
         },
 
-        _onSelect: function (e) {
+        _onSelect: function(e, detail ) {
           console.log(this.localName + ' _onSelect fired!', e, e.detail);
+          if (this.$.selector.selectedValues.length > 0) {
+            // workaround damit in der DropDown
+            var firstSelected = this.$.selector.selectedItems[0];
+            firstSelected.label = firstSelected.outerText.trim() + (this.$.selector.selectedValues.length > 1 ? "..." : "" );
+            this.$.dropdown._selectedItemChanged(firstSelected);
+          }
         },
 
-        _itemsChanged: function (e) {
-          console.log(this.localName + ' _itemsChanged fired!', e, e.detail);
+        _onDeselect: function(e, detail) {
+          console.log(this.localName + ' _onDeselect fired!', e, e.detail);
+          if (this.$.selector.selectedValues.length > 0) {
+            // workaround damit in der DropDown
+            var firstSelected = this.$.selector.selectedItems[0];
+            firstSelected.label = firstSelected.outerText.trim() + (this.$.selector.selectedValues.length > 1 ? "..." : "" );
+            this.$.dropdown._selectedItemChanged(firstSelected);
+          }
+        },
+
+        _removeSelectedItem: function(e, detail) {
+          console.log(this.localName + ' _removeSelectedItem fired!', e, e.detail);
+          for(var i = 0; i < this.items.length; i++) {
+            if ( this.items[i].id == detail.id )
+             this.$.selector.select(i);
+          }
         }
       });
     });

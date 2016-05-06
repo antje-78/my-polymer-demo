@@ -4,17 +4,18 @@
 
 <dom-module id="my-grid-columns">
   <template>
-    <iron-localstorage name="my-grid-columns"
-                       on-iron-localstorage-load="_backupLoaded"
-                       value="{{backupItems}}">
+    <iron-localstorage name="[[storageName]]"
+                       on-iron-localstorage-load="_columnBackupLoaded"
+                       on-iron-localstorage-load-empty="_load"
+                       value="{{gridColumns}}">
     </iron-localstorage>
 
-    <!--<iron-ajax id="jsonrequest" url="[[url]]"-->
-               <!--contentType="text/json"-->
-               <!--deboundDuration="30000"-->
-               <!--handleAs="json"-->
-               <!--verbose="true"-->
-               <!--on-response="_response" on-request="_request" ></iron-ajax>-->
+    <iron-ajax id="jsonrequest" url="[[url]]"
+               contentType="text/json"
+               deboundDuration="30000"
+               handleAs="json"
+               verbose="true"
+               on-response="_response" on-request="_request" ></iron-ajax>
   </template>
   <script>
     HTMLImports.whenReady(function () {
@@ -30,24 +31,33 @@
         properties: {
           url: String,
 
+          storageName: 'my-grid-columns',
+
           gridColumns: {
             type: Array,
             notify: true
           }
         },
 
-        attached: function() {
-          //this.$.jsonrequest.generateRequest();
-          //this.fire('iron-localstorage-load');
+        listener: {
+          'column-changed': '_columnChanged'
         },
 
-        _backupLoaded: function () {
-          if (this.backupItems == undefined || typeof this.backupItems != Object)
+        attached: function() {
+
+        },
+
+        _columnBackupLoaded: function () {
+          if (this.gridColumns == undefined || typeof this.gridColumns != Object)
             this.$.jsonrequest.generateRequest();
           else {
-            this.gridColumns = this.backupItems.slice();
-            this.fire('grid-columns-changed', this.gridColumns);
+            //this.gridColumns = this.backupItems.slice();
+            //this.fire('grid-columns-changed', this.gridColumns);
           }
+        },
+
+        _load: function() {
+          this.$.jsonrequest.generateRequest();
         },
 
         _request: function () {
@@ -125,8 +135,11 @@
               }
             }
           }
-        }
+        },
 
+        _columnChanged: function( e, detail ) {
+          console.log(this.localName + ' _columnChanged fired!');
+        }
       })
     });
   </script>

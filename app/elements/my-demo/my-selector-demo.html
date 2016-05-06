@@ -1,0 +1,94 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/iron-selector/iron-selector.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+
+<dom-module id="my-selector-demo">
+  <template>
+  <style>
+    paper-button.indigo {
+      background-color: var(--paper-indigo-500);
+      color: white;
+      --paper-button-raised-keyboard-focus: {
+        background-color: var(--paper-pink-a200) !important;
+        color: white !important;
+      };
+      @apply(--shadow-elevation-4dp);
+    }
+  </style>
+    <div class="content layout vertical layout-start">
+      <div>
+      <paper-button class="indigo" on-tap="btnClicked" elevation="1">Select / Deselect</paper-button>
+      <paper-dropdown-menu id="dropdown" on-iron-deselect="onDeselect">
+        <div class="dropdown-content">
+        <iron-selector id="selector" multi selected-values="{{selected}}" on-selected-values-changed="onSelectedValuesChanged">
+          <template is="dom-repeat" items="[[items]]">
+            <paper-item name="{{item.id}}">{{item.bezeichnung}}</paper-item>
+          </template>
+        </iron-selector>
+        </div>
+      </paper-dropdown-menu>
+      </div>
+      <div>
+         <template is="dom-repeat" items={{selected}}>
+          <p>{{item}}</p>
+        </template>
+      </div>
+      <div>
+        <template is="dom-repeat" items="{{selectedItems}}" as="i">
+          <p>{{i.id}} {{i.bezeichnung}}</p>
+        </template>
+      </div>
+    </div>
+  </template>
+  <script>
+        HTMLImports.whenReady(function () {
+        Polymer({
+          is: 'my-selector-demo',
+
+          properties: {
+             items: {
+              type: Array,
+              value: [{ id: 1, bezeichnung: 'Test 1'}, { id: 2, bezeichnung: 'Test 2'}, { id: 3, bezeichnung: 'Test 3'}, { id: 4, bezeichnung: 'Test 4'}],
+              notify: true
+             },
+
+            selected: {
+               type: Array,
+               notify: true
+            },
+
+            selectedItems: {
+              type: Array,
+              notify: true
+            }
+          },
+
+          onSelectedValuesChanged: function(e, detail) {
+              console.log(this.localName + ' onSelectedValuesChanged fired!');
+              var selectedItems = [];
+              for( var i = 0; i < this.$.selector.selectedValues.length; i++)
+                selectedItems[i] = this.items[i];
+              this.selectedItems = selectedItems;
+            },
+
+          onDeselect: function(e, detail) {
+            console.log(this.localName + " onDeselect call");
+            if (this.$.selector.selectedValues.length > 0) {
+              // workaround damit in der DropDown
+              var firstSelected = this.$.selector.selectedItems[0];
+              this.$.selector.selectedItems[0].label = this.$.selector.selectedItems[0].outerText + "...";
+              this.$.dropdown._selectedItemChanged(firstSelected);
+            }
+          },
+
+          btnClicked: function( e, detail ) {
+              console.log('btnClicked called');
+              this.$.selector.select(0);
+            }
+
+         });
+       });
+    </script>
+</dom-module>
