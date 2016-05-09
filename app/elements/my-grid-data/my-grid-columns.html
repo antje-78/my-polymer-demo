@@ -47,9 +47,11 @@
 
         _columnBackupLoaded: function () {
           if (this.gridColumns == undefined || typeof this.gridColumns != "object")
-            this.$.jsonrequest.generateRequest();
-          else
+            this._load();
+          else {
+            this._applyRenderer();
             this.fire('grid-columns-changed', this.gridColumns);
+          }
         },
 
         _load: function() {
@@ -71,7 +73,7 @@
           this.fire('grid-columns-changed', this.gridColumns);
         },
 
-        _applyRenderer_: function() {
+        _applyRenderer: function() {
           for(var i = 0; i < this.gridColumns.length; i++) {
               this.gridColumns[i].renderer = function(column, row) { return '<i>' +  (row[column.propertyName] == null ? '' : row[column.propertyName] ) + '</i>'; }
               if (this.gridColumns[i].propertyName == "eigenschaften") {
@@ -102,7 +104,7 @@
           }
         },
 
-        _applyRenderer: function() {
+        _applyRenderer_: function() {
           for(var i = 0; i < this.gridColumns.length; i++) {
               this.gridColumns[i].renderer = function(cell) { cell.element.innerHTML = '<i>' +  (cell.data == null ? '' : cell.data ) + '</i>'; }
               if (this.gridColumns[i].propertyName == "eigenschaften") {
@@ -140,6 +142,7 @@
         _updateColumn: function (e,  detail) {
           console.log(this.localName + ' _updateColumn fired', e , detail);
           this.$.localStorage.save();
+          this.$.localStorage.reload();
         }
       })
     });

@@ -13,7 +13,7 @@
 
 <dom-module id="my-filter">
   <template>
-    <style is="custom-style" include="iron-flex iron-flex-alignment iron-flex-reverse">
+    <style include="iron-flex iron-flex-reverse iron-flex-alignment iron-flex-factors iron-positioning">
       :root {
         --paper-badge: {
           margin-top: 40px;
@@ -112,7 +112,26 @@
         <my-dropdown-menu id="eventTypsDropDown" label="Eventtyp" placeholder="Eventtyp auswählen" url$="[[url]]/time-sheet/eventTypeList" selected-items="{{selectedEventTyps}}"></my-dropdown-menu>
       </div>
       <div class="layout vertical-reverse layout-start">
-
+        <my-json-request url="[[url]]/time-sheet/resourceTypeView" items="{{ressourceView}}" on-response="_response"></my-json-request>
+        <div class="dropdown-container">
+          <paper-dropdown-menu id="resourcesDropdown" label="Ressourcen" placeholder="Ressourcen auswählen" always-float-label toggles="true" on-iron-select="_onResourceSelect" on-iron-deselect="_onResourceDeselect">
+            <div class="dropdown-content">
+              <iron-selector id="ressourcesSelector" multi selectable=".selectable" attr-for-selected="name" selected-values="{{selectedResourceValues}}" on-selected-values-changed="_selectedResourceValuesChanged" >
+                <template is="dom-repeat" items="[[ressourceView]]">
+                  <paper-item name="{{item.resTypeId}}" class="layout vertical">
+                      <strong>{{item.resTypeName}}</strong>
+                  </paper-item>
+                  <template is="dom-repeat" items="{{item.relatedResources}}" as="resource">
+                    <paper-item name="{{resource.resId}}" class="layout vertical selectable">{{resource.resName}}</paper-item>
+                  </template>
+                </template>
+              </iron-selector>
+            </div>
+          </paper-dropdown-menu>
+          <template is="dom-if" if="{{ressourcesShowBadge}}">
+            <paper-badge label="{{selectedResourceValues.length}}"></paper-badge>
+          </template>
+        </div>
       </div>
       <div class="layout vertical-reverse layout-start">
 
@@ -147,6 +166,14 @@
             </div>
           </paper-card>
         </template>
+        <template is="dom-repeat" items="{{selectedResources}}">
+          <paper-card class="layout vertical layout-start">
+            <div class="card-content">
+              <div class="filter-header">Ressource<div class="filter-remove-icon"><iron-icon icon="remove-circle-outline" on-tap="onRemoveResource"></iron-icon></div></div>
+              <div class="filter-content">{{item.bezeichnung}}</div>
+            </div>
+          </paper-card>
+        </template>
     </div>
   </template>
   <script>
@@ -177,6 +204,8 @@
           selectedTopics:  Array,
 
           selectedEventTyps: Array,
+
+          selectedResources: Array,
 
           resources: {
             type: Array,
@@ -256,12 +285,70 @@
         this.$.eventTypsDropDown.fire('remove-selected-item', e.model.item, { node : this.$.eventTypsDropDown});
       },
 
+      onRemoveResource: function(e, detail) {
+        console.log(this.localName + ' onRemoveResource fired!' ,e, e.detail, e.model.item);
+        this.$.ressourcesSelector.select(e.model.item.id);
+      },
+
       selectedMeetingPointsChanged: function() {
         console.log(this.localName + ' selectedMeetingPointsChanged fired!' , e);
       },
 
       _ironDeselect: function(e) {
         console.log(this.localName + ' _ironDeselect fired!' , e);
+      },
+
+      _onSelect: function(e, detail ) {
+          console.log(this.localName + ' _onSelect fired!', e, e.detail);
+
+        },
+
+        _onDeselect: function(e, detail) {
+          console.log(this.localName + ' _onDeselect fired!', e, e.detail);
+
+        },
+
+      _onResourceSelect: function(e) {
+        console.log(this.localName + ' _onResourceSelect fired!' , e);
+        if (this.$.ressourcesSelector.selectedValues.length > 0) {
+            // workaround damit in der DropDown
+            var firstSelected = this.$.ressourcesSelector.selectedItems[0];
+            firstSelected.label = firstSelected.outerText.trim() + (this.$.ressourcesSelector.selectedValues.length > 1 ? "..." : "" );
+            this.$.resourcesDropdown._selectedItemChanged(firstSelected);
+        }
+      },
+
+      _onResourceDeselect: function(e) {
+        console.log(this.localName + ' _onResourceDeselect fired!' , e);
+        if (this.$.ressourcesSelector.selectedValues.length > 0) {
+            // workaround damit in der DropDown
+            var firstSelected = this.$.ressourcesSelector.selectedItems[0];
+            firstSelected.label = firstSelected.outerText.trim() + (this.$.ressourcesSelector.selectedValues.length > 1 ? "..." : "" );
+            this.$.resourcesDropdown._selectedItemChanged(firstSelected);
+        }
+      },
+
+      _selectedResourceValuesChanged: function(e) {
+          console.log(this.localName + ' _selectedResourceValuesChanged fired!' , e);
+
+          this.ressourcesShowBadge = (this.$.ressourcesSelector.selectedValues.length > 0) ? true : false;
+          var selectedItems = [];
+          for( var i = 0; i < this.$.ressourcesSelector.selectedValues.length; i++) {
+            var res = this._findResource(this.$.ressourcesSelector.selectedValues[i]);
+            selectedItems[i] = { id: res.resId, bezeichnung: res.resName };
+          }
+          this.selectedResources = selectedItems;
+          this.fire('selected-items-changed', this.selectedResources);
+      },
+
+      _findResource(resId) {
+        for(var i = 0; i < this.ressourceView.length ; i++) {
+          for(var j = 0; j < this.ressourceView[i].relatedResources.length; j++) {
+            if (this.ressourceView[i].relatedResources[j].resId == resId)
+              return this.ressourceView[i].relatedResources[j];
+          }
+        }
+        return null;
       }
     });
   });

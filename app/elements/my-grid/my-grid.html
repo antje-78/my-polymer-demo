@@ -1,5 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/editor-icons.html">
 <link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
 
 <dom-module id="my-grid">
@@ -44,64 +45,163 @@
         width: 16px;
         z-index: 9;
       }
-
+/*
       #grid-container {
         overflow: auto;
         @apply(--layout-relative);
       }
+
+      #grid {
+        @apply(--layout-relative);
+      }
+*/
+      #columnState {
+        position: fixed;
+        top: 260px;
+        right: 16px;
+        background-color: var(--primary-background-color);
+      }
+
+      div.innerDiv{
+        white-space:nowrap;
+      }
+
+      div.columns{
+        overflow:hidden;
+        //overflow-x: scroll;
+        width: 90vw;
+      }
+
+      div.rows{
+        overflow: scroll;
+        height:   43px;
+        width:    90vw;
+      }
+
+      div.data{
+        overflow:scroll;
+        height:60px;
+        width: 95vw;
+      }
+
       table {
         border-collapse: collapse;
-        height: 100vh;
+        //height: 100vh;
         @apply(--paper-font-body1);
+
+        table-layout:fixed;
+        border-color: var(--primary-text-color);
+        border: 0;
+      //	border-collapse:collapse;
       }
 
       table tr th {
         padding: 8px;
         color: var(--primary-text-color);
         border-bottom: 2px solid var(--divider-color);
+        display: table-cell;
+        vertical-align: top;
       }
 
-      table tr td {
+      table td {
         padding: 8px;
         color: var(--primary-text-color);
+        border-width:0px;
+        border-style:hidden;
+        vertical-align:top;
+        border-collapse:collapse;
+        display: table-cell;
+        vertical-align: top;
       }
 
-      #grid {
-        @apply(--layout-relative);
+      table.inner {
+        border-width:0px;
+        border-style:hidden;
       }
 
-      #columnState {
-        position: absolute;
-        top: 16px;
-        right: 0px;
-        background-color: var(--primary-background-color);
+      table.inner td {
+        padding: 0px;
+        display: table-cell;
+        vertical-align: top;
       }
-
     </style>
     <iron-media-query full query="print" query-matches="{{print}}"></iron-media-query>
     <div id="grid-container">
       <div id="grid">
-        <table class="flex">
+        <table class="">
           <colgroup>
-            <template is="dom-repeat" items="{{gridColumns}}" as="column">
-              <col name="{{column.name}}" flex="1">
-            </template>
+            <col >
+            <col >
           </colgroup>
-          <thead>
-            <tr>
-              <template is="dom-repeat" items="{{gridColumns}}" as="column">
-                <th>{{column.name}}</th>
-              </template>
-            </tr>
-          </thead>
           <tbody>
-            <template is="dom-repeat" items="{{gridData}}" as="row">
-              <tr>
-                <template is="dom-repeat" items="{{gridColumns}}" as="column">
-                  <td>{{_computeCellData(column, row)}}</td>
-                </template>
-              </tr>
-            </template>
+            <tr class="layout horizontal">
+              <td><div id="corner" class=""></div></td>
+              <td>
+                <div id="columnHeader" class="columns">
+                  <table class="inner">
+                    <colgroup>
+                      <col>
+                      <template is="dom-repeat" items="{{gridColumns}}" as="column">
+                        <col name="{{column.name}}" hidden="{{column.hidden}}">
+                      </template>
+                    </colgroup>
+                    <thead>
+                    <tr class="layout horizontal">
+                      <template is="dom-repeat" items="{{gridColumns}}" as="column">
+                        <!--<template is="dom-if" if="{{!column.hidden}}">-->
+                        <th class="" hidden="{{column.hidden}}">
+                          <div class="innerDiv">{{column.name}}</div>
+                          <!--<iron-icon icon="editor:border-right"></iron-icon>-->
+                        </th>
+                        <!--</template>-->
+                      </template>
+                    </tr>
+                    </thead>
+                  </table>
+                </div>
+              </td>
+            </tr>
+            <tr class="layout horizontal">
+              <td><div id="corner" class="style-scope my-grid"></div></td>
+              <!--<td>-->
+                <!--<div id="rowHeader" class="rows">-->
+                  <!--&lt;!&ndash;<table class="inner">&ndash;&gt;-->
+                    <!--&lt;!&ndash;<template is="dom-repeat" items="{{gridData}}" as="row">&ndash;&gt;-->
+                      <!--&lt;!&ndash;<tr>&ndash;&gt;-->
+                        <!--&lt;!&ndash;<template is="dom-repeat" items="{{gridColumns}}" as="column">&ndash;&gt;-->
+                          <!--&lt;!&ndash;<template is="dom-if" if="{{!column.hidden}} && {{column.frozen}}">&ndash;&gt;-->
+                            <!--&lt;!&ndash;<td class=""><div class="innerDiv">{{_computeCellData(column, row)}}</div></td>&ndash;&gt;-->
+                          <!--&lt;!&ndash;</template>&ndash;&gt;-->
+                        <!--&lt;!&ndash;</template>&ndash;&gt;-->
+                      <!--&lt;!&ndash;</tr>&ndash;&gt;-->
+                    <!--&lt;!&ndash;</template>&ndash;&gt;-->
+                  <!--&lt;!&ndash;</table>&ndash;&gt;-->
+                <!--</div>-->
+              <!--</td>-->
+              <td>
+                <div id="data" class="data">
+                  <table class="inner" >
+                    <colgroup>
+                      <col>
+                      <template is="dom-repeat" items="{{gridColumns}}" as="column">
+                        <col name="{{column.name}}" hidden="{{column.hidden}}">
+                      </template>
+                    </colgroup>
+                    <tbody>
+                    <template is="dom-repeat" items="{{gridData}}" as="row">
+                      <tr>
+                        <template is="dom-repeat" items="{{gridColumns}}" as="column">
+                          <!--<template is="dom-if" if="{{!column.hidden}} && {{!column.frozen}}">-->
+                            <td class="" hidden="{{column.hidden}}"><div class="innerDiv">{{_computeCellData(column, row)}}</div></td>
+                          </template>
+                        <!--</template>-->
+                      </tr>
+                    </template>
+                    </tbody>
+                  </table>
+                </div>
+              </td>
+            </tr>
           </tbody>
         </table>
         <div id="columnState">
@@ -119,7 +219,11 @@
         properties: {
           gridData: Array,
 
-          gridColumns: Array
+          gridColumns: {
+            type: Array,
+            notify: true
+          }
+
 
     },
 

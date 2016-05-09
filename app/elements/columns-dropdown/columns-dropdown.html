@@ -8,21 +8,22 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
 
-<link rel="import" href="../../bower_components/iron-dropdown.html">
+<link rel="import" href="../../bower_components/iron-dropdown/iron-dropdown.html">
 <link rel="import" href="../../bower_components/neon-animation/neon-animations.html">
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="grow-height-animation.html">
 
 <dom-module id="columns-dropdown">
-  <style>
+  <style include="iron-flex iron-flex-reverse iron-flex-alignment iron-flex-factors iron-positioning">
     :host {
-      display: inline-block;
+      --paper-checkbox-size: 16px;
     }
 
     paper-checkbox {
       padding: 8px;
       width: 100%;
     }
+
   </style>
   <template>
     <div on-tap="open">
@@ -34,9 +35,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       close-animation-config="[[closeAnimationConfig]]">
         <paper-listbox class="dropdown-content layout vertical layout-start">
           <template is="dom-repeat" items="{{gridColumns}}" as="column">
-            <editable-item item="{{column}}">
               <paper-checkbox checked$="{{!column.hidden}}" on-tap="onToggleColumnHidden">{{column.name}}</paper-checkbox>
-            </editable-item>
           </template>
         </paper-listbox>
     </iron-dropdown>
