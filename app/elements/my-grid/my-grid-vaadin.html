@@ -1,6 +1,5 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
 
 <dom-module id="my-grid">
   <template>
@@ -12,6 +11,51 @@
         display: block;
       }
 
+      vaadin-grid {
+        -webkit-user-select: initial;
+      }
+
+      vaadin-grid /deep/.vaadin-grid-header.vaadin-grid th.vaadin-grid {
+        padding-right: 0;
+      }
+
+      vaadin-grid /deep/.vaadin-grid-body.vaadin-grid td.vaadin-grid {
+        padding-right: 0;
+      }
+
+      vaadin-grid /deep/.vaadin-grid-footer.vaadin-grid td.vaadin-grid {
+        padding-right: 0;
+      }
+
+/*
+      vaadin-grid /deep/.vaadin-grid-body.vaadin-grid tr.vaadin-grid {
+        height: inherit;
+        min-height: var(--vaadin-grid-row-height, 48px);
+      }
+*/
+      vaadin-grid[print-layout] /deep/.vaadin-grid-tablewrapper.vaadin-grid {
+        overflow: visible;
+        height: 100% !important;
+      }
+
+      vaadin-grid table:before {
+        -webkit-animation: vaadin-grid-spin-360 400ms linear infinite;
+        animation: vaadin-grid-spin-360 400ms linear infinite;
+        border: 2px solid #03A9F4;
+        border-radius: 50%;
+        border-right-color: transparent;
+        border-top-color: transparent;
+        content: "";
+        display: block;
+        height: 16px;
+        left: 50%;
+        margin-left: -8px;
+        margin-top: -8px;
+        position: absolute;
+        top: 60%;
+        width: 16px;
+        z-index: 9;
+      }
       /* Anim */
       @keyframes grid-spin-360 {
         100% {
@@ -44,71 +88,57 @@
         width: 16px;
         z-index: 9;
       }
-
+/*
       #grid-container {
-        overflow: auto;
+        overflow: scroll;
         @apply(--layout-relative);
       }
       table {
         border-collapse: collapse;
         height: 100vh;
         @apply(--paper-font-body1);
+        @apply(--layout-relative);
       }
 
       table tr th {
         padding: 8px;
-        color: var(--primary-text-color);
+        color: var(--primary-font-color);
         border-bottom: 2px solid var(--divider-color);
       }
 
       table tr td {
         padding: 8px;
-        color: var(--primary-text-color);
+        color: var(--primary-font-color);
       }
-
-      #grid {
-        @apply(--layout-relative);
-      }
-
-      #columnState {
-        position: absolute;
-        top: 16px;
-        right: 0px;
-        background-color: var(--primary-background-color);
-      }
-
+      */
     </style>
     <iron-media-query full query="print" query-matches="{{print}}"></iron-media-query>
-    <div id="grid-container">
-      <div id="grid">
-        <table class="flex">
-          <colgroup>
-            <template is="dom-repeat" items="{{gridColumns}}" as="column">
-              <col name="{{column.name}}" flex="1">
-            </template>
-          </colgroup>
-          <thead>
-            <tr>
-              <template is="dom-repeat" items="{{gridColumns}}" as="column">
-                <th>{{column.name}}</th>
-              </template>
-            </tr>
-          </thead>
-          <tbody>
-            <template is="dom-repeat" items="{{gridData}}" as="row">
-              <tr>
-                <template is="dom-repeat" items="{{gridColumns}}" as="column">
-                  <td>{{_computeCellData(column, row)}}</td>
-                </template>
-              </tr>
-            </template>
-          </tbody>
-        </table>
-        <div id="columnState">
-          <columns-dropdown grid-columns="{{gridColumns}}"></columns-dropdown>
-        </div>
-      </div>
-
+    <div id="grid-container" class="flex">
+      <vaadin-grid id="grid" items="{{gridData}}" selection-mode="disabled" print-layout$="{{print}}">
+        <!--<table class="flex">-->
+          <!--<colgroup>-->
+            <!--<template is="dom-repeat" items="{{gridColumns}}" as="column">-->
+              <!--<col name="{{column.name}}" flex="1">-->
+            <!--</template>-->
+          <!--</colgroup>-->
+          <!--<thead>-->
+            <!--<tr>-->
+              <!--<template is="dom-repeat" items="{{gridColumns}}" as="column">-->
+                <!--<th>{{column.name}}</th>-->
+              <!--</template>-->
+            <!--</tr>-->
+          <!--</thead>-->
+          <!--<tbody>-->
+            <!--<template is="dom-repeat" items="{{gridData}}" as="row">-->
+              <!--<tr>-->
+                <!--<template is="dom-repeat" items="{{gridColumns}}" as="column">-->
+                  <!--<td>{{_computeCellData(column, row)}}</td>-->
+                <!--</template>-->
+              <!--</tr>-->
+            <!--</template>-->
+          <!--</tbody>-->
+        <!--</table>-->
+      </vaadin-grid>
     </div>
   </template>
   <script>
@@ -126,8 +156,7 @@
         listeners: {
           'refresh': '_refreshGrid',
           'grid-columns-changed': '_columnsChanged',
-          'grid-data-changed': '_itemsChanged',
-          'column-changed': '_columnChanged'
+          'grid-data-changed': '_itemsChanged'
         },
 
         created: function (e) {
@@ -153,8 +182,6 @@
         _columnsChanged: function (e) {
           console.log(this.localName + ' columnsChanged fired!');
           var vaadin_grid = this.querySelector('vaadin-grid');
-          if (!vaadin_grid)
-            return;
           for(var i = 0; i < this.gridColumns.length; i++)
           {
             var renderFunction = this.gridColumns[i].renderer == undefined ? function(cell) { cell.element.innerHTML = (cell.data == null ? '' : cell.data ); } : this.gridColumns[i].renderer;
@@ -205,14 +232,8 @@
 //                        });
 //                      };
         },
-
         _computeCellData: function(column, row) {
            return column.renderer(column, row);
-        },
-
-        _columnChanged: function (e, detail) {
-          console.log(this.localName + '_columnChanged fired!', e, detail);
-          this.fire('update-column', detail);
         }
       });
 

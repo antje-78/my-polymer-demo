@@ -4,7 +4,7 @@
 
 <dom-module id="my-grid-columns">
   <template>
-    <iron-localstorage name="[[storageName]]"
+    <iron-localstorage id="localStorage" name="[[storageName]]"
                        on-iron-localstorage-load="_columnBackupLoaded"
                        on-iron-localstorage-load-empty="_load"
                        value="{{gridColumns}}">
@@ -25,7 +25,9 @@
         listeners: {
           'request':  '_request',
           'response': '_response',
-          'refresh':  '_refresh'
+          'refresh':  '_refresh',
+          'column-changed': '_columnChanged',
+          'update-column' : '_updateColumn'
         },
 
         properties: {
@@ -39,21 +41,15 @@
           }
         },
 
-        listener: {
-          'column-changed': '_columnChanged'
-        },
-
         attached: function() {
 
         },
 
         _columnBackupLoaded: function () {
-          if (this.gridColumns == undefined || typeof this.gridColumns != Object)
+          if (this.gridColumns == undefined || typeof this.gridColumns != "object")
             this.$.jsonrequest.generateRequest();
-          else {
-            //this.gridColumns = this.backupItems.slice();
-            //this.fire('grid-columns-changed', this.gridColumns);
-          }
+          else
+            this.fire('grid-columns-changed', this.gridColumns);
         },
 
         _load: function() {
@@ -139,6 +135,11 @@
 
         _columnChanged: function( e, detail ) {
           console.log(this.localName + ' _columnChanged fired!');
+        },
+
+        _updateColumn: function (e,  detail) {
+          console.log(this.localName + ' _updateColumn fired', e , detail);
+          this.$.localStorage.save();
         }
       })
     });

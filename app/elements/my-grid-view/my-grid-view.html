@@ -60,7 +60,8 @@
         'start-rotate-refresh-icon': '_startRotateRefreshIcon',
         'filters-changed': '_filtersChanged',
         'grid-columns-changed': '_columnsResponse',
-        'grid-data-changed': '_gridDataResponse'
+        'grid-data-changed': '_gridDataResponse',
+        'update-column': '_updateColumn'
       },
 
       _refreshGrid: function () {
@@ -96,6 +97,11 @@
         console.log(this.localName + " _gridDataResponse !" , e);
         this.gridData = e.detail;
         this.fire('grid-data-changed', this.gridData, { node: this.$.grid, bubbles: false, cancelable: true } );
+      },
+
+      _updateColumn: function (e, detail) {
+        console.log(this.localName + '_updateColumn fired!', e, detail);
+        this.querySelector('my-grid-columns').fire('update-column', detail, { bubbles: false, cancelable: true });
       }
     })
   </script>

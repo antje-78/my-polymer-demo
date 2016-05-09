@@ -1,0 +1,25 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="editable-item">
+  <template>
+    <content></content>
+  </template>
+  <script>
+    HTMLImports.whenReady(function () {
+      Polymer({
+        is: 'editable-item',
+
+        properties: {
+          item: {
+            type: Object,
+            notify: true
+          }
+        },
+
+        onItemChanged: function(e ,detail) {
+          this.fire('item-changed', this.item);
+        }
+      });
+    });
+  </script>
+</dom-module>
