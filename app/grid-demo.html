@@ -60,34 +60,69 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 </head>
 <body unresolved>
 <div>
-  <vaadin-grid id="lazy" items='[{"firstName":"Gabriel","lastName":"Cook","address":{"street":"6261 Hidden Lake Manor","city":"Foot of Ten","state":"Alabama","zip":"36262-6582","country":"USA","phone":"(251) 555-1099"},"email":"gabriel.cook@company.com"},{"firstName":"Genesis","lastName":"Stewart","address":{"street":"8616 Heather Glade","city":"Corkscrew","state":"Mississippi","zip":"38785-5317","country":"USA","phone":"(601) 555-9985"},"email":"genesis.stewart@company.com"},{"firstName":"Ayden","lastName":"Rivera","address":{"street":"9236 Quiet Round","city":"Vopolo Havoka","state":"Missouri","zip":"64519-3548","country":"USA","phone":"(417) 555-8373"},"email":"ayden.rivera@company.com"},{"firstName":"Hunter","lastName":"Sullivan","address":{"street":"4662 Stony View","city":"Oblong","state":"Illinois","zip":"62468-0592","country":"USA","phone":"(618) 555-6510"},"email":"hunter.sullivan@company.com"},{"firstName":"Jordan","lastName":"Cooper","address":{"street":"961 Golden Crescent","city":"Quinapoxet","state":"Tennessee","zip":"37314-3596","country":"USA","phone":"(865) 555-9904"},"email":"jordan.cooper@company.com"},{"firstName":"Ariana","lastName":"Parker","address":{"street":"2590 Little Sky Square","city":"Defeated","state":"New Jersey","zip":"07091-9079","country":"USA","phone":"(551) 555-6739"},"email":"ariana.parker@company.com"},{"firstName":"Lillian","lastName":"Flores","address":{"street":"8695 High Horse Carrefour","city":"Nashville","state":"District of Columbia","zip":"20012-7697","country":"USA","phone":"(202) 555-5209"},"email":"lillian.flores@company.com"},{"firstName":"Levi","lastName":"Bell","address":{"street":"5868 Cinder Centre","city":"Apponagansett","state":"North Dakota","zip":"58777-1298","country":"USA","phone":"(701) 555-0519"},"email":"levi.bell@company.com"},{"firstName":"Leah","lastName":"Morris","address":{"street":"3977 Heather Way","city":"Nankipooh","state":"Minnesota","zip":"56063-2417","country":"USA","phone":"(320) 555-1707"},"email":"leah.morris@company.com"},{"firstName":"Ian","lastName":"Perry","address":{"street":"2139 Dewy Autumn Orchard","city":"Wax","state":"Florida","zip":"34109-9657","country":"USA","phone":"(863) 555-4371"},"email":"ian.perry@company.com"}]'>
-    <table>
-      <colgroup>
-        <col name="number" width="60" flex="1">
-        <col name="firstName" flex="2">
-        <col name="lastName" flex="2">
-        <col name="email" flex="2">
-      </colgroup>
-      <thead>
-      <tr>
-        <th>#</th>
-        <th>Vorname</th>
-        <th>Nachname</th>
-        <th>E-Mail</th>
-      </tr>
-      </thead>
-      <tbody>
-      <template is="dom-repeat" items="{{items}}">
+  <dom-module id="vaadin-grid-demo">
+    <template>
+    <iron-ajax id="data" url="elements/my-grid-data/demo-grid-data.json"
+               contentType="text/json" deboundDuration="30000" handleAs="json"
+               verbose="true" last-response="{{data}}" auto
+    ></iron-ajax>
+    <vaadin-grid id="lazy"
+                 items="{{data}}">
+      <table>
+        <colgroup>
+          <col name="number" hidable="true">
+          <col name="firstName" flex="2" hidable="true">
+          <col name="lastName" flex="2" hidable="true">
+          <col name="email" hidable="true">
+        </colgroup>
+        <thead>
         <tr>
-          <td></td>
-          <td>{{item.firstName}}</td>
-          <td>{{item.lastName}}</td>
-          <td>{{item.email}}</td>
+          <th>#</th>
+          <th colspan="2">Name</th>
+          <th>E-Mail</th>
         </tr>
-      </template>
-      </tbody>
-    </table>
-  </vaadin-grid>
+        <tr>
+          <th></th>
+          <th>Vorname</th>
+          <th>Nachname</th>
+          <th></th>
+        </tr>
+        </thead>
+      </table>
+    </vaadin-grid>
+    </template>
+    <script>
+      Polymer({
+        is: 'vaadin-grid-demo',
+
+        ready: function() {
+
+        },
+
+        attached: function () {
+          console.log(this.localName + ' was attached!');
+          var vaadin_grid = document.querySelector("vaadin-grid");
+          vaadin_grid.then(this.gridCreated);
+        },
+
+        gridCreated: function() {
+            console.log('vaadin grid finished');
+            var grid = document.querySelector("vaadin-grid");
+            console.log(grid.columns, grid.$$('.column-hiding-toggle'), grid.$$('.vaadin-grid-sidebar-button'));
+            grid.$$('.vaadin-grid-sidebar-button').addEventListener('click', this.columnToggleMenuOpened);
+        },
+
+        columnToggleMenuOpened: function(e) {
+            console.log('vaadin grid column menu opened');
+            var grid = document.querySelector("vaadin-grid");
+            console.log(e, grid.columns, grid.$$('.column-hiding-toggle'), grid.$$('.vaadin-grid-sidebar-button'));
+        }
+      });
+    </script>
+  </dom-module>
+  <template is="dom-bind" id="app">
+    <vaadin-grid-demo></vaadin-grid-demo>
+  </template>
 </div>
 <!-- build:js scripts/app.js -->
 <script src="scripts/app.js"></script>

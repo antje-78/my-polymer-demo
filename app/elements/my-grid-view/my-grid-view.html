@@ -6,32 +6,38 @@
 <dom-module id="my-grid-view">
   <template>
     <style is="custom-style" include="shared-style">
+      div {
+        position: relative;
+      }
     </style>
-    <content select="my-grid-columns"></content>
-    <content select="my-remote-grid-data"></content>
-    <content select="my-grid-data"></content>
-    <content select="my-filter" ></content>
-    <!--<my-json-request url$="{{serviceUrl}}/time-sheet/time-sheet-columns" result="{{gridColumns}}"></my-json-request>-->
-    <content select="#grid-column-provider"></content>
+    <div id="filterContent">
+      <content select="my-grid-columns"></content>
+      <content select="my-remote-grid-data"></content>
+      <content select="my-grid-data"></content>
+      <content select="my-filter" ></content>
+      <!--<my-json-request url$="{{serviceUrl}}/time-sheet/time-sheet-columns" result="{{gridColumns}}"></my-json-request>-->
+      <content select="#grid-column-provider"></content>
 
-    <!--url$="{{serviceUrl}}/time-sheet/time-sheet-columns"-->
-    <!--url="../my-grid-data/demo-grid-columns.json"-->
-    <!--<iron-ajax id="grid-column-provider"-->
-               <!--url$="{{serviceUrl}}/time-sheet/time-sheet-columns"-->
-               <!--contentType="text/json"-->
-               <!--deboundDuration="30000"-->
-               <!--handleAs="json"-->
-               <!--verbose="true"-->
-               <!--last-response="{{gridColumns}}"-->
-               <!--on-response="_columnsResponse"-->
-               <!--auto></iron-ajax>-->
+      <!--url$="{{serviceUrl}}/time-sheet/time-sheet-columns"-->
+      <!--url="../my-grid-data/demo-grid-columns.json"-->
+      <!--<iron-ajax id="grid-column-provider"-->
+                 <!--url$="{{serviceUrl}}/time-sheet/time-sheet-columns"-->
+                 <!--contentType="text/json"-->
+                 <!--deboundDuration="30000"-->
+                 <!--handleAs="json"-->
+                 <!--verbose="true"-->
+                 <!--last-response="{{gridColumns}}"-->
+                 <!--on-response="_columnsResponse"-->
+                 <!--auto></iron-ajax>-->
 
-    <iron-icon id="refreshBtn" icon="refresh" on-tap="_refreshGrid"></iron-icon>
-
+      <iron-icon id="refreshBtn" icon="refresh" on-tap="_refreshGrid"></iron-icon>
+    </div>
     <p></p>
-    <my-grid id="grid" grid-data="{{gridData}}" grid-columns="{{gridColumns}}">
+    <div id="gridContent">
+      <my-grid id="grid" grid-data="{{gridData}}" grid-columns="{{gridColumns}}">
 
-    </my-grid>
+      </my-grid>
+    </div>
   </template>
   <script>
     Polymer({
@@ -81,6 +87,7 @@
 
       ready: function () {
         console.log(this.localName + " ready!", this.columnProvider);
+        this.$.gridContent.offsetWidth;
       },
 
       columnProviderChanged: function () {

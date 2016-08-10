@@ -1,0 +1,34 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-drawer-panel/paper-drawer-panel.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="my-notes-list.html">
+<link rel="import" href="my-notes-view.html">
+
+<dom-module id="my-notes-app">
+  <template>
+
+    <iron-ajax url="./notes.json" last-response="{{noteCategories}}" auto></iron-ajax>
+
+    <paper-drawer-panel>
+
+      <my-notes-list drawer user="{{user}}" note-categories="{{noteCategories}}" selected-note-categorie="{{selectedNoteCategorie}}" ></my-notes-list>
+
+      <my-notes-view main user="{{user}}" note-categorie="{{selectedNoteCategorie}}" ></my-notes-view>
+
+    </paper-drawer-panel>
+  </template>
+  <script>
+    Polymer({
+      is: 'my-notes-app',
+
+      properties: {
+        user: {
+          value: function () {
+            return { "id": 200, "name": "Annie", "lastReadNote": {} }
+          }
+        }
+      }
+
+    })
+  </script>
+</dom-module>

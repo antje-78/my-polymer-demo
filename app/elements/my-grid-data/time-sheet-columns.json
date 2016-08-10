@@ -1,0 +1,42 @@
+{
+  "Event": [
+    {"propertyName": "zeit", "name": "Zeit", "groupName": "Event", "hidable": true, "hidden": false, "sortable": true, "index": 0, "frozen": true, "width": 100},
+    {"propertyName":"eventBezeichnung","name":"Bezeichnung","hidable":true,"hidden":false,"sortable":true, "index": 1, "frozen": true, "width": 500},
+    {"propertyName":"eventBeschreibung","name":"Beschreibung","hidable":true,"hidden":true,"sortable":true, "index": 2, "frozen": false, "width": 500},
+    {"propertyName":"eventKurztext","name":"Kurztext","hidable":true,"hidden":true,"sortable":true, "index": 3, "frozen": false, "width": 30},
+    {"propertyName":"eventSprache","name":"Sprache","hidable":true,"hidden":false,"sortable":true, "index": 4, "frozen": false, "width": 100},
+    {"propertyName":"treffpunkt","name":"Treffpunkt","hidable":true,"hidden":false,"sortable":true, "index": 5, "frozen": false, "width": 200},
+    {"propertyName":"eigenschaften","name":"Dynamische Attribute","hidable":true,"hidden":false,"sortable":true, "index": 6, "frozen": false, "width": 500}
+  ],
+  "Kapazität": [
+    {"propertyName":"teilnehmerGebucht","name":"Gebucht","hidable":true,"hidden":false,"sortable":true, "index": 7, "frozen": false, "width": 50},
+    {"propertyName":"kapazitaetGesamt","name":"Gesamt","hidable":true,"hidden":false,"sortable":true, "index": 8, "frozen": false, "width": 50},
+    {"propertyName":"teilnehmerBuchbar","name":"Verfügbar","hidable":true,"hidden":false,"sortable":true, "index": 9, "frozen": false, "width": 50}
+  ],
+  "Ressourcen": [
+    {"propertyName":"ressourcetype-","name":"","hidable":true,"hidden":false,"sortable":true, "index": 9, "frozen": false, "width": 50}
+  ],
+  "Vorgänge": [
+    {"propertyName":"vorgaenge.vorgangsnummer","name":"Nummer","hidable":true,"hidden":false,"sortable":true, "index": 10, "frozen": false, "width": 50},
+    {"propertyName":"vorgaenge.ansprechpartner","name":"Ansprechpartner","hidable":true,"hidden":false,"sortable":true, "index": 11, "frozen": false, "width": 500},
+    {"propertyName":"vorgaenge.grupppenname","name":"Ansprechpartner Gruppe","hidable":true,"hidden":false,"sortable":true, "index": 12, "frozen": false, "width": 500},
+    {"propertyName":"vorgaenge.telefonnummer","name":"Telefonnummer","hidable":true,"hidden":false,"sortable":true, "index": 13, "frozen": false, "width": 200},
+    {"propertyName":"vorgaenge.internerKommentar","name":"Interner Kommentar","hidable":true,"hidden":false,"sortable":true, "index": 14, "frozen": false, "width": 500},
+    {"propertyName":"vorgaenge.zahlart","name":"Zahlart","hidable":true,"hidden":false,"sortable":true, "index": 15, "frozen": false, "width": 200},
+    {"propertyName":"vorgaenge.firma","name":"Firma","hidable":true,"hidden":false,"sortable":true, "index": 16, "frozen": false, "width": 200},
+    {"propertyName":"vorgaenge.teilnehmer","name":"Teilnehmer","hidable":true,"hidden":false,"sortable":true, "index": 17, "frozen": false, "width": 50}
+  ],
+  "Preise": [
+    {"propertyName":"preise.preiskategorie","name":"Preiskategorie","hidable":true,"hidden":false,"sortable":true, "index": 10, "frozen": false, "width": 50},
+    {"propertyName":"preise.preis","name":"Preis","hidable":true,"hidden":false,"sortable":true, "index": 10, "frozen": false, "width": 50}
+  ],
+  "Guide": [
+    {"propertyName":"mitarbeiter.name","name":"Name","hidable":true,"hidden":false,"sortable":true, "index": 10, "frozen": false, "width": 50},
+    {"propertyName":"mitarbeiter.telefon","name":"Telefon","hidable":true,"hidden":false,"sortable":true, "index": 10, "frozen": false, "width": 50},
+    {"propertyName":null,"name":"Rechnung gestellt","hidable":true,"hidden":false,"sortable":true, "index": 10, "frozen": false, "width": 50},
+    {"propertyName":null,"name":"Unterschrift","hidable":true,"hidden":false,"sortable":true, "index": 10, "frozen": false, "width": 50}
+  ],
+  "Anmerkung Kasse": [
+    {"propertyName":null,"name":"","hidable":true,"hidden":false,"sortable":true, "index": 18, "frozen": false, "width": 50}
+  ]
+}

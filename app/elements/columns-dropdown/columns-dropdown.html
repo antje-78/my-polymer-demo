@@ -33,11 +33,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       disabled="[[disabled]]"
       open-animation-config="[[openAnimationConfig]]"
       close-animation-config="[[closeAnimationConfig]]">
-        <paper-listbox class="dropdown-content layout vertical layout-start">
-          <template is="dom-repeat" items="{{gridColumns}}" as="column">
-              <paper-checkbox checked$="{{!column.hidden}}" on-tap="onToggleColumnHidden">{{column.name}}</paper-checkbox>
-          </template>
-        </paper-listbox>
+
+      <paper-listbox class="dropdown-content layout vertical layout-start">
+        <template is="dom-repeat" items="{{gridColumns}}" as="column">
+            <template is="dom-repeat" items="{{column}}" as="column_">
+              <paper-checkbox checked$="{{!column_.hidden}}" on-tap="onToggleColumnHidden">{{column_.name}}</paper-checkbox>
+            </template>
+        </template>
+      </paper-listbox>
+
     </iron-dropdown>
   </template>
   <script>

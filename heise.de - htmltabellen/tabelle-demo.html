@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tabelle</title>
+  <style>
+    @media print { thead { display:table-header-group; } }
+
+    table {
+      table-layout: fixed;
+    }
+
+    table th {
+      padding: 10px;
+      border:px solid grey;
+      border-spacing:px;
+    }
+
+    table td {
+      padding: 10px;
+      border:px solid grey;
+      border-spacing:px;
+    }
+
+
+
+  </style>
+</head>
+<body>
+<table id="table">
+  <thead>
+    <tr>
+      <th><div></div></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+<script>
+  window.addEventListener('load', function() {
+    console.log('Dom Loaded!');
+
+    var thead = document.getElementsByTagName('thead')[0].getElementsByTagName('tr')[0];
+    var th = document.getElementsByTagName('th')[0];
+    th.innerHTML = "Spalte 1";
+    for ( var i = 2; i <= 200; i++) {
+      var _temp = th.cloneNode();
+      thead.appendChild(_temp);
+      _temp.innerHTML = "Spalte " + i;
+      _temp.id = "head-" + i;
+    }
+
+    var tbody = document.getElementsByTagName('tbody')[0].getElementsByTagName('tr')[0];
+    var td = document.getElementsByTagName('td')[0];
+    td.innerHTML = "Inhalt 1";
+    for ( var i = 2; i <= 200; i++) {
+      var _temp = td.cloneNode();
+      tbody.appendChild(_temp);
+      _temp.innerHTML = "Inhalt " + i;
+      _temp.id = "content-" + i;
+    }
+  });
+</script>
+</body>
+</html>

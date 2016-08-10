@@ -10,12 +10,20 @@
                        value="{{gridColumns}}">
     </iron-localstorage>
 
-    <iron-ajax id="jsonrequest" url="[[url]]"
+    <iron-ajax id="ajaxRemote" url="[[urlRemote]]"
                contentType="text/json"
                deboundDuration="30000"
                handleAs="json"
                verbose="true"
-               on-response="_response" on-request="_request" ></iron-ajax>
+               last-response="{{gridColumnsRemote}}"
+               on-response="_responseRemote" on-request="_requestRemote" ></iron-ajax>
+    <iron-ajax id="ajaxStatic" url="[[urlStatic]]"
+               contentType="text/json"
+               deboundDuration="30000"
+               handleAs="json"
+               verbose="true"
+               last-response="{{gridColumnsStatic}}"
+               on-response="_responseStatic" on-request="_requestStatic" ></iron-ajax>
   </template>
   <script>
     HTMLImports.whenReady(function () {
@@ -31,12 +39,13 @@
         },
 
         properties: {
-          url: String,
+          urlRemote: String,
+          urlStatic: String,
 
           storageName: 'my-grid-columns',
 
           gridColumns: {
-            type: Array,
+            type: Object,
             notify: true
           }
         },
@@ -55,29 +64,86 @@
         },
 
         _load: function() {
-          this.$.jsonrequest.generateRequest();
+          this.$.ajaxRemote.generateRequest();
+          this.$.ajaxStatic.generateRequest();
+          this._afterRespone();
         },
 
-        _request: function () {
+        _requestRemote: function () {
           console.log(this.localName + ' request fired!');
+        },
+
+        _responseRemote: function(e) {
+          console.log(this.localName + ' response fired!' + e.detail.response);
+          this.gridColumns = e.detail.response;
+
+          this._afterRespone();
+        },
+
+        _requestStatic: function () {
+          console.log(this.localName + ' request fired!');
+        },
+
+        _responseStatic: function(e) {
+          console.log(this.localName + ' response fired!' + e.detail.response);
+          this._afterRespone();
         },
 
         _refresh: function(e, filters) {
 
         },
 
-        _response: function(e) {
-          console.log(this.localName + ' response fired!' + e.detail.response);
-          this.gridColumns = e.detail.response;
-          this._applyRenderer();
+        _afterRespone: function() {
+          if (this.$.ajaxRemote.loading || this.$.ajaxStatic.loading)
+            return;
+
+          var columns = this.gridColumnsStatic;
+          var columns_ = [];
+          for ( i = 0; i < this.gridColumnsRemote.length; i++) {
+            if ( this.gridColumnsRemote[i].propertyName == null)
+              continue;
+
+            if ( typeof columns.length == "number" ) { // wenn Array, dann Column in Array suchen
+              for ( var j = 0; j < columns.length; j++) {
+                var key_ = columns[j].propertyName;
+                if ( key_ != undefined && this.gridColumnsRemote[i].propertyName.indexOf(key_) > -1 ) {
+                  columns_[j + ''] = columns_[j + ''] || [] ;
+                  columns_[j + ''].push(this.gridColumnsRemote[i]);
+                }
+              }
+            }
+            if ( typeof columns == "object") { // ansonsten Objekt nach Column durchsuchen
+              for( var key in columns ) {
+                  for ( var j = 0; j < columns[key].length; j++) {
+                    var key_ = columns[key][j].propertyName;
+                    if ( key_ != undefined && this.gridColumnsRemote[i].propertyName.indexOf(key_) > -1 ) {
+                      columns_[key] = columns_[key] || [];
+                      columns_[key].push(this.gridColumnsRemote[i]);
+                    }
+                  }
+              }
+            }
+          }
+          //this._applyRenderer();
+          for ( var key in columns_) {
+            var index = Number.NaN;
+            try { index = parseInt(key); } catch (e) { index = null; };
+            if ( Number.isNaN(index) ) {
+              columns[key] = columns_[key];
+            }
+          }
+          for ( var key in columns ) {
+            console.log('Column-Group', key);
+          }
+          this.gridColumns = columns;
           this.fire('grid-columns-changed', this.gridColumns);
         },
 
         _applyRenderer: function() {
           for(var i = 0; i < this.gridColumns.length; i++) {
-              this.gridColumns[i].renderer = function(column, row) { return '<i>' +  (row[column.propertyName] == null ? '' : row[column.propertyName] ) + '</i>'; }
+              this.gridColumns[i].renderer = function(column, row) { return (row[column.propertyName] == null ? '' : row[column.propertyName] ); }
               if (this.gridColumns[i].propertyName == "eigenschaften") {
-                this.gridColumns[i].renderer = function(column, row) { return '<i>' +  (row[column.propertyName] == null ? '' : row[column.propertyName].replace(/\n/g, '<br/>') ) + '</i>'; }
+                this.gridColumns[i].renderer = function(column, row) { return (row[column.propertyName] == null ? '' : row[column.propertyName].replace(/\n/g, '<br/>') ); }
               }
 
               if (this.gridColumns[i].propertyName != undefined && this.gridColumns[i].propertyName != null) {

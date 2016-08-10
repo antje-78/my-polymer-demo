@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tabelle</title>
+  <style>
+    @media print { thead { display:table-header-group; } }
+
+    div.main {
+      display: block;
+    }
+
+    div.inline {
+      display: inline;
+      width: 150px;
+      border: 1px solid grey;
+      padding: 10px
+    }
+
+  </style>
+</head>
+<body>
+<div id="main">
+  <div class="inline"></div>
+</div>
+<script>
+  window.addEventListener('load', function() {
+    console.log('Dom Loaded!');
+
+    var mainDiv = document.getElementById('main');
+    var div = mainDiv.getElementsByTagName('div')[0];
+    div.innerHTML = "Spalte 1";
+    for ( var i = 2; i <= 200; i++) {
+      var _temp = div.cloneNode();
+      mainDiv.appendChild(_temp);
+      _temp.innerHTML = "Spalte " + i;
+      _temp.id = "head-" + i;
+    }
+
+  });
+</script>
+</body>
+</html>

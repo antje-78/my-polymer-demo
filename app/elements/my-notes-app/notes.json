@@ -1,0 +1,40 @@
+[{
+  "id": 100,
+  "title": "Einkaufsliste",
+  "notes": [
+    {
+      "id": 101,
+      "title": "",
+      "text": "Olivenöl"
+    },
+    {
+      "id": 102,
+      "title": "",
+      "text": "Lätta"
+    },
+    {
+      "id": 103,
+      "title": "",
+      "text": "Brot"
+    }
+  ],
+  "lastNote": "Brot"
+},
+{
+  "id": 104,
+  "title": "Termine",
+  "notes": [
+    {
+      "id": 105,
+      "title": "Arzt",
+      "text": "01.01.2016"
+    },
+    {
+      "id": 106,
+      "title": "Meeting",
+      "text": "01.01.2016"
+    }
+  ],
+  "lastNote": "01.01.2016"
+}
+]

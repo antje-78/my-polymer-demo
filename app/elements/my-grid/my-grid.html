@@ -55,33 +55,75 @@
         @apply(--layout-relative);
       }
 */
-      #columnState {
-        position: fixed;
-        top: 260px;
-        right: 16px;
-        background-color: var(--primary-background-color);
-      }
 
       div.innerDiv{
-        white-space:nowrap;
+        //white-space:nowrap;
       }
 
-      div.columns{
+      div.columns[screen-layout] {
         overflow:hidden;
         //overflow-x: scroll;
         width: 90vw;
       }
 
-      div.rows{
+      div.columns[print-layout] {
+        overflow: visible;
+        //overflow-x: scroll;
+       // width: 90vw;
+      }
+
+      div.rows[screen-layout]{
         overflow: scroll;
         height:   43px;
         width:    90vw;
       }
 
-      div.data{
+      div.rows[print-layout]{
+        overflow: visible;
+        //height:   43px;
+        //width:    90vw;
+      }
+
+      div.frozenData {
+          overflow: visible;
+          height:60px;
+          width: auto;
+      }
+
+      div.data[screen-layout]{
         overflow:scroll;
         height:60px;
         width: 95vw;
+      }
+
+      div.data[print-layout]{
+        overflow:visible;
+        //height:60px;
+        //width: 95vw;
+      }
+
+      #frozenColumnHeader table.inner {
+        height: 60px;
+      }
+
+      #grid {
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+
+      #columnState {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background-color: var(--primary-background-color);
+      }
+
+      #columnState:focus {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background-color: var(--accecnt-color);
       }
 
       table {
@@ -90,111 +132,140 @@
         @apply(--paper-font-body1);
 
         table-layout:fixed;
-        border-color: var(--primary-text-color);
+        border-color: var(--divider-color);
         border: 0;
-      //	border-collapse:collapse;
+        border-spacing: 0;
       }
 
-      table tr th {
-        padding: 8px;
+      td, th {
+        padding: 0;
+      }
+
+      tr.columnHeader th {
         color: var(--primary-text-color);
         border-bottom: 2px solid var(--divider-color);
         display: table-cell;
         vertical-align: top;
+        text-align: left;
+
+        padding-top: 8px;
+        padding-bottom: 8px;
       }
 
-      table td {
-        padding: 8px;
+      tr.columnHeader th div {
+        height: 26px;
+      }
+
+      tr.fixedColumnHeader th {
         color: var(--primary-text-color);
-        border-width:0px;
-        border-style:hidden;
-        vertical-align:top;
-        border-collapse:collapse;
+        border-bottom: 2px solid var(--divider-color);
         display: table-cell;
         vertical-align: top;
+        text-align: left;
+
+        padding-top: 8px;
+        padding-bottom: 8px;
       }
 
-      table.inner {
-        border-width:0px;
-        border-style:hidden;
-      }
-
-      table.inner td {
-        padding: 0px;
-        display: table-cell;
-        vertical-align: top;
+      tr.fixedColumnHeader th div {
+        height: 26px;
       }
     </style>
     <iron-media-query full query="print" query-matches="{{print}}"></iron-media-query>
+    <iron-media-query full query="screen" query-matches="{{screen}}"></iron-media-query>
     <div id="grid-container">
       <div id="grid">
-        <table class="">
+        <table class="" print-layout$="{{print}}" screen-layout$="{{screen}}">
           <colgroup>
             <col >
             <col >
           </colgroup>
           <tbody>
             <tr class="layout horizontal">
-              <td><div id="corner" class=""></div></td>
               <td>
-                <div id="columnHeader" class="columns">
+                <div print-layout$="{{print}}" screen-layout$="{{screen}}">
                   <table class="inner">
-                    <colgroup>
-                      <col>
-                      <template is="dom-repeat" items="{{gridColumns}}" as="column">
-                        <col name="{{column.name}}" hidden="{{column.hidden}}">
-                      </template>
-                    </colgroup>
+                    <template is="dom-repeat" items="{{fixedColumnHeaders}}" as="c">
+                      <colgroup>
+                        <template is="dom-repeat" items="{{c}}" as="column">
+                          <col colspan$="{{column.colspan}}">
+                        </template>
+                      </colgroup>
+                    </template>
                     <thead>
-                    <tr class="layout horizontal">
-                      <template is="dom-repeat" items="{{gridColumns}}" as="column">
-                        <!--<template is="dom-if" if="{{!column.hidden}}">-->
-                        <th class="" hidden="{{column.hidden}}">
-                          <div class="innerDiv">{{column.name}}</div>
-                          <!--<iron-icon icon="editor:border-right"></iron-icon>-->
-                        </th>
-                        <!--</template>-->
-                      </template>
-                    </tr>
+                    <template is="dom-repeat" items="{{fixedColumnHeaders}}" as="c">
+                      <tr class="fixedColumnHeader">
+                        <template is="dom-repeat" items="{{c}}" as="column">
+                          <th colspan$="{{column.colspan}}"><div>{{column.name}}</div></th>
+                        </template>
+                      </tr>
+                    </template>
+                    </thead>
+                  </table>
+                </div>
+              </td>
+              <td>
+                <div id="columnHeader" class="columns" print-layout$="{{print}}" screen-layout$="{{screen}}">
+                  <table class="inner">
+                    <template is="dom-repeat" items="{{columnHeaders}}" as="c">
+                      <colgroup>
+                        <template is="dom-repeat" items="{{c}}" as="column">
+                          <col colspan$="{{column.colspan}}">
+                        </template>
+                      </colgroup>
+                    </template>
+                    <thead>
+                    <template is="dom-repeat" items="{{columnHeaders}}" as="c">
+                      <tr class="columnHeader">
+                        <template is="dom-repeat" items="{{c}}" as="column">
+                          <th colspan$="{{column.colspan}}"><div>{{column.name}}</div></th>
+                        </template>
+                      </tr>
+                    </template>
                     </thead>
                   </table>
                 </div>
               </td>
             </tr>
             <tr class="layout horizontal">
-              <td><div id="corner" class="style-scope my-grid"></div></td>
-              <!--<td>-->
-                <!--<div id="rowHeader" class="rows">-->
-                  <!--&lt;!&ndash;<table class="inner">&ndash;&gt;-->
-                    <!--&lt;!&ndash;<template is="dom-repeat" items="{{gridData}}" as="row">&ndash;&gt;-->
-                      <!--&lt;!&ndash;<tr>&ndash;&gt;-->
-                        <!--&lt;!&ndash;<template is="dom-repeat" items="{{gridColumns}}" as="column">&ndash;&gt;-->
-                          <!--&lt;!&ndash;<template is="dom-if" if="{{!column.hidden}} && {{column.frozen}}">&ndash;&gt;-->
-                            <!--&lt;!&ndash;<td class=""><div class="innerDiv">{{_computeCellData(column, row)}}</div></td>&ndash;&gt;-->
-                          <!--&lt;!&ndash;</template>&ndash;&gt;-->
-                        <!--&lt;!&ndash;</template>&ndash;&gt;-->
-                      <!--&lt;!&ndash;</tr>&ndash;&gt;-->
-                    <!--&lt;!&ndash;</template>&ndash;&gt;-->
-                  <!--&lt;!&ndash;</table>&ndash;&gt;-->
-                <!--</div>-->
-              <!--</td>-->
               <td>
-                <div id="data" class="data">
-                  <table class="inner" >
-                    <colgroup>
-                      <col>
-                      <template is="dom-repeat" items="{{gridColumns}}" as="column">
-                        <col name="{{column.name}}" hidden="{{column.hidden}}">
+                <div print-layout$="{{print}}" screen-layout$="{{screen}}">
+                  <table class="inner">
+                    <template is="dom-repeat" items="{{fixedColumnHeaders}}" as="c">
+                      <colgroup>
+                        <template is="dom-repeat" items="{{c}}" as="column">
+                          <col colspan$="{{column.colspan}}">
+                        </template>
+                      </colgroup>
+                    </template>
+                    <tbody>
+                    <template is="dom-repeat" items="{{gridData}}" as="row">
+                      <template is="dom-repeat" items="{{fixedColumnHeaders}}" as="c">
+                        <tr class="fixedData">
+                          <template is="dom-repeat" items="{{c}}" as="column">
+                            <td colspan$="{{column.colspan}}"><div>{{_computeCellData(column, row)}}</div></td>
+                          </template>
+                        </tr>
                       </template>
+                    </template>
+                    </tbody>
+                  </table>
+                </div>
+              </td>
+              <td>
+                <div print-layout$="{{print}}" screen-layout$="{{screen}}">
+                  <table class="inner">
+                    <colgroup>
+                        <template is="dom-repeat" items="{{columnHeaders.0}}" as="column">
+                          <col colspan$="{{column.colspan}}">
+                        </template>
                     </colgroup>
                     <tbody>
                     <template is="dom-repeat" items="{{gridData}}" as="row">
-                      <tr>
-                        <template is="dom-repeat" items="{{gridColumns}}" as="column">
-                          <!--<template is="dom-if" if="{{!column.hidden}} && {{!column.frozen}}">-->
-                            <td class="" hidden="{{column.hidden}}"><div class="innerDiv">{{_computeCellData(column, row)}}</div></td>
-                          </template>
-                        <!--</template>-->
+                      <tr class="data">
+                            <template is="dom-repeat" items="{{columnHeaders.0}}" as="column">
+                              <td colspan$="{{column.colspan}}"><div>{{_computeCellData(column, row)}}</div></td>
+                            </template>
                       </tr>
                     </template>
                     </tbody>
@@ -204,11 +275,10 @@
             </tr>
           </tbody>
         </table>
-        <div id="columnState">
-          <columns-dropdown grid-columns="{{gridColumns}}"></columns-dropdown>
-        </div>
       </div>
-
+      <div id="columnState">
+        <columns-dropdown grid-columns="{{columnHeaders}}"></columns-dropdown>
+      </div>
     </div>
   </template>
   <script>
@@ -217,15 +287,31 @@
         is: 'my-grid',
 
         properties: {
+          test: {
+            type: String,
+            value: 'Hello',
+            notify: true
+          },
+
           gridData: Array,
 
           gridColumns: {
             type: Array,
             notify: true
+          },
+
+          fixedColumnHeaders: {
+            type: Array,
+            value: [],
+            notify: true
+          },
+
+          columnHeaders: {
+            type: Array,
+            value: [],
+            notify: true
           }
-
-
-    },
+        },
 
         listeners: {
           'refresh': '_refreshGrid',
@@ -256,6 +342,41 @@
 
         _columnsChanged: function (e) {
           console.log(this.localName + ' columnsChanged fired!');
+
+          var columnHeaders = [];
+          var fixedColumnHeaders = [];
+          //this.test = 'Hello World';
+          if ( typeof this.gridColumns.length == "number" ) {
+            for ( var j = 0; j < this.gridColumns.length; j++) {
+              if (this.gridColumns[j].frozen == true)
+                fixedColumnHeaders[fixedColumnHeaders.length] = this.gridColumns[j];
+              else
+                columnHeaders[columnHeaders.length] = this.gridColumns[j];
+            }
+          }
+
+          if ( typeof this.gridColumns == "object") {
+            for( var key in this.gridColumns ) {
+                var fixedColumns = this.gridColumns[key].filter( (value, index, reference) => value.frozen == true , this.gridColumns[key]);
+                var columns = this.gridColumns[key].filter( (value, index, reference) => value.frozen != true , this.gridColumns[key]);
+                if ( fixedColumns.length > 0 ) {
+                  fixedColumnHeaders[0] = fixedColumnHeaders[0] || [];
+                  fixedColumnHeaders[0].push({ "name" : key, "colspan": fixedColumns.length });
+                  fixedColumnHeaders[1] = fixedColumnHeaders[1] || [];
+                  fixedColumnHeaders[1] = fixedColumnHeaders[1].concat(fixedColumns);
+                }
+
+                if ( columns.length > 0 ) {
+                  columnHeaders[0] = columnHeaders[0] || [];
+                  columnHeaders[0].push({ "name" : key, "colspan": columns.length });
+                  columnHeaders[1] = columnHeaders[1] || [];
+                  columnHeaders[1] = columnHeaders[1].concat(columns);
+                }
+            }
+          }
+          this.set('columnHeaders', columnHeaders);
+          this.set('fixedColumnHeaders', fixedColumnHeaders);
+
           var vaadin_grid = this.querySelector('vaadin-grid');
           if (!vaadin_grid)
             return;

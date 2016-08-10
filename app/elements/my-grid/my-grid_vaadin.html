@@ -113,8 +113,10 @@
       */
     </style>
     <iron-media-query full query="print" query-matches="{{print}}"></iron-media-query>
-    <div id="grid-container" class="flex">
-      <vaadin-grid id="grid" items="{{gridData}}" selection-mode="disabled" print-layout$="{{print}}">
+    <iron-media-query full query="screen" query-matches="{{screen}}"></iron-media-query>
+    <div id="grid-container">
+      <!--visible-rows="{{gridData.length}}"-->
+      <vaadin-grid id="grid" items="{{gridData}}" selection-mode="disabled" screen-layout$="{{screen}}" on-columns-changed="_columnsChanged">
         <!--<table class="flex">-->
           <!--<colgroup>-->
             <!--<template is="dom-repeat" items="{{gridColumns}}" as="column">-->
@@ -149,13 +151,20 @@
         properties: {
           gridData: Array,
 
-          gridColumns: Array
+          gridColumns: {
+            type: Array,
+            notify: true,
+            observer: '_columnsChanged'
+          },
+
+          visibleRows: 5
 
     },
 
         listeners: {
           'refresh': '_refreshGrid',
           'grid-columns-changed': '_columnsChanged',
+          'columns-changed': '_columnsChanged',
           'grid-data-changed': '_itemsChanged'
         },
 
@@ -169,6 +178,16 @@
 
         attached: function () {
           console.log(this.localName + ' was attached!');
+          var vaadin_grid = document.querySelector("vaadin-grid");
+          vaadin_grid.addEventListener('dom-change', this.gridReady);
+          vaadin_grid.then(function() {
+              console.log('vaadin grid finished');
+              console.log(Polymer.dom(document.querySelector("vaadin-grid")).columns);
+          });
+        },
+
+        gridReady: function() {
+          console.log('test');
         },
 
         detached: function () {
@@ -179,7 +198,7 @@
           console.log(this.localName + ' columnsChanged fired!');
         },
 
-        _columnsChanged: function (e) {
+        _columnsChanged_: function (e) {
           console.log(this.localName + ' columnsChanged fired!');
           var vaadin_grid = this.querySelector('vaadin-grid');
           for(var i = 0; i < this.gridColumns.length; i++)
@@ -197,13 +216,18 @@
               console.log('Header-Cell 0,'+ i + ': ' , vaadin_grid.header.getCell(0, i));
               vaadin_grid.header.getCell(0, i).content = grid.gridColumns[i].name;
             }
-            //vaadin_grid.frozenColumns = 2;
+            vaadin-grid.addEventListener('columns-changed', function(e) {
+              console.log('Vaadin trigger fired.');
+            });
+
+            vaadin_grid.frozenColumns = 2;
           });
         },
 
         _itemsChanged: function (e) {
           var grid = document.querySelector("my-grid");
           grid.toggleClass('grid-loading-data', false, document.querySelector("#grid-container"));
+          this.visibleRows = this.gridData.length + 1;
         },
 
         _refreshGrid: function(){
