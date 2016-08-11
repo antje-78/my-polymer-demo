@@ -2,6 +2,7 @@
 <link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/communication-icons.html">
 <link rel="import" href="../../bower_components/paper-badge/paper-badge.html">
 <link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
@@ -12,7 +13,7 @@
     <paper-toolbar>
       <paper-icon-button id="list-icon" icon="list"></paper-icon-button>
       <div class="title">Notizen</div>
-      <!--<paper-badge for="list-icon" value="{{_computeUnread()}}"></paper-badge>-->
+      <paper-badge for="list-icon" label="{{_unreadCount}}" hidden$="{{_hasUnreadNotes(_unreadCount)}}"></paper-badge>
     </paper-toolbar>
 
     <paper-menu selected="{{_selectedIndex}}">
@@ -20,10 +21,10 @@
         <paper-item>
           <paper-item-body two-line>
             <div>
-              <iron-icon icon="communication:textsms" hidden$="{{_computeNotesRead(item.notes.lenght, item.id, user.lastReadMessage.*)}}"></iron-icon>
+              <iron-icon icon="communication:textsms" hidden$="{{_computeRead(item.notes.length, item.id, user.lastReadNote.*)}}"></iron-icon>
               <span>{{item.title}}</span>
             </div>
-            <!--<div secondary>{{item.lastMessage}}</div>-->
+            <div secondary>{{item.lastNote}}</div>
           </paper-item-body>
         </paper-item>
       </template>
@@ -47,8 +48,16 @@
 
         selectedNoteCategorie: {
           notify: true
+        },
+
+        _unreadCount: {
+          type: Number
         }
       },
+
+      observers: [
+        '_computeUnread(user.lastReadNote.*, noteCategories.*)'
+      ],
 
       _noteCategoriesChanged: function () {
         this._selectedIndex = 0;
@@ -58,12 +67,18 @@
         this.$.selector.select(this.noteCategories[index]);
       },
 
-      _computeUnread: function (lastMessageInfo, notesInfo) {
-
+      _computeUnread: function (lastReadNoteInfo, noteCategoriesInfo) {
+        this.set('_unreadCount',  noteCategoriesInfo.base.reduce(function (prev, noteCategorie) {
+          return prev + (lastReadNoteInfo.base[noteCategorie.id] == noteCategorie.notes.length ? 0 : 1);
+        }, 0));
       },
 
-      _computeNotesRead: function (length, id, lastMessageInfo) {
-        return length === lastMessageInfo.base[id];
+      _computeRead: function (length, id, lastNoteInfo) {
+        return length === lastNoteInfo.base[id];
+      },
+
+      _hasUnreadNotes: function (unreadCount) {
+        return (typeof unreadCount == "number" && unreadCount == 0 ? true : false);
       }
     })
   </script>

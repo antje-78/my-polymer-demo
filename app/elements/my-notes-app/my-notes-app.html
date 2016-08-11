@@ -6,10 +6,19 @@
 
 <dom-module id="my-notes-app">
   <template>
+    <style is="customStyle">
+      :host {
+        display: block;
 
+        /* scrim verstecken, damit das click-Event nicht andere Komponenten überlagert */
+        --paper-drawer-panel-scrim: {
+          display: none;
+        }
+      }
+    </style>
     <iron-ajax url="./notes.json" last-response="{{noteCategories}}" auto></iron-ajax>
 
-    <paper-drawer-panel>
+    <paper-drawer-panel id="drawerPanel">
 
       <my-notes-list drawer user="{{user}}" note-categories="{{noteCategories}}" selected-note-categorie="{{selectedNoteCategorie}}" ></my-notes-list>
 
@@ -24,9 +33,17 @@
       properties: {
         user: {
           value: function () {
-            return { "id": 200, "name": "Annie", "lastReadNote": {} }
+            return { id: 200, name: "Annie", lastReadNote: {} };
           }
         }
+      },
+
+      listeners: {
+        'tap' : '_onCloseDrawerPanel'
+      },
+
+      _onCloseDrawerPanel: function (e) {
+        this.$.drawerPanel.closeDrawer();
       }
 
     })

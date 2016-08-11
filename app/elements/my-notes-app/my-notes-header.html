@@ -1,0 +1,57 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+
+<dom-module id="my-notes-header">
+  <template>
+    <style>
+      :host {
+        --paper-input-container-color: var(--paper-toolbar-color, --dark-theme-text-color);
+        --paper-input-container-input-color: var(--paper-toolbar-color, --dark-theme-text-color);
+        --paper-input-container-focus-color: var(--paper-toolbar-color, --dark-theme-text-color);
+        --paper-input-container-input: {
+          font-size: 20px;
+          font-weight: 400;
+          line-height: 1;
+        }
+      }
+    </style>
+
+    <paper-toolbar>
+      <div id="titleLabel" class="title" hidden$="{{_editMode}}">{{label}}</div>
+      <paper-input id="titleInput" value="{{label}}" no-label-float label="Titel" hidden$="{{!_editMode}}"></paper-input>
+    </paper-toolbar>
+  </template>
+  <script>
+    Polymer({
+      is: 'my-notes-header',
+
+      properties: {
+        label: {
+          type: String,
+          notify: true
+        },
+        _editMode: {
+          type: Boolean,
+          value: false
+        }
+      },
+
+      listeners: {
+        'tap': '_onSwitchEditMode',
+        'titleInput.keyup': '_onEndInput'
+      },
+
+      _onSwitchEditMode: function (e) {
+        this._editMode = !this._editMode;
+        if (this._editMode)
+          this.$.titleInput.focus(e);
+      },
+
+      _onEndInput: function (e) {
+        if (e.keyCode == 13)
+          this._editMode = false;
+      }
+    });
+  </script>
+</dom-module>

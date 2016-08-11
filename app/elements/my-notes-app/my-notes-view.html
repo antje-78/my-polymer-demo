@@ -1,8 +1,8 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item-body.html">
 <link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="my-notes-header.html">
 
 <dom-module id="my-notes-view">
   <template>
@@ -17,24 +17,26 @@
       paper-input {
         padding: 10px;
       }
+
+      paper-item-body::content > * {
+        white-space: pre;
+      }
     </style>
 
-    <paper-toolbar>
-      <div class="title">{{noteCategorie.title}}</div>
-    </paper-toolbar>
+    <my-notes-header label="{{noteCategorie.title}}"></my-notes-header>
 
     <div class="list">
       <template is="dom-repeat" items="{{noteCategorie.notes}}">
         <paper-item>
           <paper-item-body two-line>
-            <div>{{item.title}}</div>
-            <div secondary>{{item.text}}</div>
+            <div hidden$="{{!_hasTitle(item)}}">{{item.title}}</div>
+            <div secondary$="{{_hasTitle(item)}}">{{item.text}}</div>
           </paper-item-body>
         </paper-item>
       </template>
     </div>
 
-    <paper-textarea label="Neue Notiz:" rows="3" on-keyup="_handleInput" char-counter="true"></paper-textarea>
+    <paper-textarea id="newNoteText" no-label-float label="Neue Notiz (Hinzufügen mit STRG + ENTER):" rows="3" on-keyup="_handleInput" char-counter="true"></paper-textarea>
   </template>
 
   <script>
@@ -56,18 +58,25 @@
         this.set(['user.lastReadNote', id], length);
       },
 
-      _handleInput: function (e) {
-        if (e.keyCode != 13)
-          return;
+      _hasTitle: function (note) {
+        return typeof note == "object" && note != null && typeof note.title == "string" && note.title != null && note.title.length > 0;
+      },
 
+      _handleInput: function (e) {
+        if (e.keyCode != 13 || !e.ctrlKey)
+          return;
+        var value = e.target.value;
+        var pos = value.indexOf('\n');
+        var title = pos > -1 ? value.substring(0, pos) : null;
+        var text = pos > -1 ? value.substring(pos + 1, value.length) : value;
         this.push('noteCategorie.notes', {
-          "title": "",
-          "text": e.target.value,
+          "title": title,
+          "text": text,
           "user": this.user.name
         });
 
         this.set("noteCategorie.lastNote", e.target.value);
-        e.target.value = '';
+        this.$.newNoteText.value = null;
       }
     })
   </script>
